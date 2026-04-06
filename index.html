@@ -471,25 +471,59 @@
 </head>
 <body>
 
-<!-- TELA DE ATIVAÇÃO -->
-<div class="activation-screen" id="activationScreen">
+<!-- LOADING -->
+<div class="activation-screen" id="loadingScreen">
+  <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo" class="activation-logo">
+  <div class="activation-subtitle" style="margin-top:16px">Carregando...</div>
+</div>
+
+<!-- TELA DE LOGIN -->
+<div class="activation-screen hidden" id="loginScreen">
   <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo Dominium Recovery" class="activation-logo">
   <div class="activation-title">Cobrança Fácil</div>
-  <div class="activation-subtitle">Insira seu código de ativação para começar</div>
-  
+  <div class="activation-subtitle" style="color:#c9a84c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Dominium Recovery</div>
+
   <div class="activation-card">
-    <input 
-      type="text" 
-      id="activationCode" 
-      class="activation-input" 
-      placeholder="XXXX-XXXX-XXXX"
-      maxlength="30"
-    >
-    <button class="activation-btn" id="activateBtn">Ativar Licença</button>
-    <div class="activation-error" id="activationError">Código inválido. Tente novamente.</div>
-    
+    <!-- TABS -->
+    <div style="display:flex;border-bottom:1px solid #242424;margin-bottom:24px;">
+      <div id="tabEntrar" onclick="switchLoginTab('entrar')" style="flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;">Entrar</div>
+      <div id="tabAtivar" onclick="switchLoginTab('ativar')" style="flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;">Ativar</div>
+    </div>
+
+    <!-- ENTRAR -->
+    <div id="formEntrar">
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">E-mail</div>
+        <input type="email" id="loginEmail" class="activation-input" placeholder="seu@email.com" style="margin-bottom:0">
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Senha</div>
+        <input type="password" id="loginSenha" class="activation-input" placeholder="••••••••" style="margin-bottom:0">
+      </div>
+      <button class="activation-btn" onclick="entrar()">🔐 Entrar</button>
+      <div class="activation-error" id="loginError"></div>
+    </div>
+
+    <!-- ATIVAR -->
+    <div id="formAtivar" style="display:none">
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">E-mail</div>
+        <input type="email" id="cadEmail" class="activation-input" placeholder="seu@email.com" style="margin-bottom:0">
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Senha</div>
+        <input type="password" id="cadSenha" class="activation-input" placeholder="mínimo 6 caracteres" style="margin-bottom:0">
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Código de Ativação</div>
+        <input type="text" id="activationCode" class="activation-input" placeholder="Ex: EMPRESA001" maxlength="30" style="margin-bottom:0;text-transform:uppercase">
+      </div>
+      <button class="activation-btn" id="activateBtn" onclick="ativar()">✅ Ativar Licença</button>
+      <div class="activation-error" id="activationError"></div>
+    </div>
+
     <div class="activation-help">
-      Não tem um código? Entre em contato com o suporte.
+      Não tem um código? Entre em contato: 11944833837
     </div>
   </div>
 </div>
@@ -506,6 +540,7 @@
       <div class="total" id="headerTotal">R$ 0,00</div>
       <div class="label">A RECEBER</div>
     </div>
+    <button onclick="sair()" style="background:none;border:1px solid #242424;color:#5a5a5a;font-size:11px;padding:6px 12px;cursor:pointer;font-family:inherit;margin-left:8px;border-radius:4px;">Sair</button>
   </div>
 
   <div class="tabs">
@@ -738,6 +773,7 @@
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -758,12 +794,81 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 // ========== SISTEMA DE ATIVAÇÃO ==========
+// ===== AUTH FIREBASE =====
+const auth = firebase.auth();
+const db2 = firebase.firestore();
+
+// Tabs login
+window.switchLoginTab = (tab) => {
+  document.getElementById('formEntrar').style.display = tab==='entrar'?'block':'none';
+  document.getElementById('formAtivar').style.display = tab==='ativar'?'block':'none';
+  document.getElementById('tabEntrar').style.cssText = tab==='entrar'?'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;':'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;';
+  document.getElementById('tabAtivar').style.cssText = tab==='ativar'?'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;':'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;';
+};
+
+// Auth state
+auth.onAuthStateChanged((user) => {
+  document.getElementById('loadingScreen').classList.add('hidden');
+  if(user){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('active');
+    listar(); atualizarHeaderTotal();
+  } else {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('appContainer').classList.remove('active');
+  }
+});
+
+window.entrar = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+  const err = document.getElementById('loginError');
+  err.textContent=''; err.classList.remove('show');
+  if(!email||!senha){err.textContent='Preencha e-mail e senha.';err.classList.add('show');return;}
+  try {
+    await auth.signInWithEmailAndPassword(email, senha);
+  } catch(e) {
+    err.textContent = e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found' ? 'E-mail ou senha incorretos.' : 'Erro ao entrar.';
+    err.classList.add('show');
+  }
+};
+
+window.ativar = async () => {
+  const email = document.getElementById('cadEmail').value.trim();
+  const senha = document.getElementById('cadSenha').value;
+  const code = document.getElementById('activationCode').value.trim().toUpperCase();
+  const err = document.getElementById('activationError');
+  err.textContent=''; err.classList.remove('show');
+  if(!email||!senha||!code){err.textContent='Preencha todos os campos.';err.classList.add('show');return;}
+  if(senha.length<6){err.textContent='Senha mínima 6 caracteres.';err.classList.add('show');return;}
+  try {
+    const codigoRef = db2.collection('codigos').doc(code);
+    const codigoDoc = await codigoRef.get();
+    if(!codigoDoc.exists){err.textContent='❌ Código não encontrado.';err.classList.add('show');return;}
+    const dados = codigoDoc.data();
+    if(!dados.ativo){err.textContent='❌ Código desativado.';err.classList.add('show');return;}
+    if(dados.usado){err.textContent='❌ Código já utilizado.';err.classList.add('show');return;}
+    await auth.createUserWithEmailAndPassword(email, senha);
+    await codigoRef.update({usado:true, cliente:email});
+    showToast('✅ Conta criada com sucesso!');
+  } catch(e) {
+    if(e.code==='auth/email-already-in-use') err.textContent='E-mail já cadastrado. Use "Entrar".';
+    else err.textContent='Erro: '+e.message;
+    err.classList.add('show');
+  }
+};
+
+window.sair = async () => {
+  await auth.signOut();
+  showToast('👋 Até logo!');
+};
+
 const ACTIVATION_KEY = 'app_activated';
 const LICENSE_KEY = 'license_code';
 
 // Verificar se já está ativado
 function checkActivation() {
-  const isActivated = localStorage.getItem(ACTIVATION_KEY);
+  const isActivated = true; // Auth now handled by Firebase
   
   if (isActivated === 'true') {
     showApp();
