@@ -483,7 +483,7 @@
       id="activationCode" 
       class="activation-input" 
       placeholder="XXXX-XXXX-XXXX"
-      maxlength="14"
+      maxlength="30"
     >
     <button class="activation-btn" id="activateBtn">Ativar Licença</button>
     <div class="activation-error" id="activationError">Código inválido. Tente novamente.</div>
@@ -739,6 +739,7 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
 // ========== CONFIGURAÇÃO FIREBASE ==========
@@ -785,15 +786,8 @@ function showApp() {
 
 // Formatar código enquanto digita
 document.getElementById('activationCode').addEventListener('input', function(e) {
-  let value = e.target.value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
-  let formatted = '';
-  
-  for (let i = 0; i < value.length && i < 12; i++) {
-    if (i > 0 && i % 4 === 0) formatted += '-';
-    formatted += value[i];
-  }
-  
-  e.target.value = formatted;
+  let value = e.target.value.toUpperCase();
+  e.target.value = value;
 });
 
 // Ativar com Enter
@@ -807,12 +801,12 @@ document.getElementById('activationCode').addEventListener('keypress', function(
 document.getElementById('activateBtn').addEventListener('click', activateLicense);
 
 async function activateLicense() {
-  const code = document.getElementById('activationCode').value.replace(/-/g, '');
+  const code = document.getElementById('activationCode').value.trim().toUpperCase();
   const errorDiv = document.getElementById('activationError');
   const btn = document.getElementById('activateBtn');
   
-  if (code.length !== 12) {
-    errorDiv.textContent = 'Código deve ter 12 caracteres';
+  if (code.length < 4) {
+    errorDiv.textContent = 'Digite um código válido';
     errorDiv.classList.add('show');
     return;
   }
@@ -822,23 +816,29 @@ async function activateLicense() {
   errorDiv.classList.remove('show');
   
   try {
-    // Buscar código no Firebase
-    const snapshot = await database.ref('activation_codes/' + code).once('value');
-    const codeData = snapshot.val();
+    // Buscar código no Firestore (mesma coleção do app empresas)
+    const db = firebase.firestore();
+    const codigoRef = db.collection('codigos').doc(code);
+    const codigoDoc = await codigoRef.get();
     
-    if (!codeData) {
+    if (!codigoDoc.exists) {
       throw new Error('Código não encontrado');
     }
     
-    if (!codeData.active) {
-      throw new Error('Código inativo ou já usado');
+    const dados = codigoDoc.data();
+    
+    if (!dados.ativo) {
+      throw new Error('Código inativo ou desativado');
+    }
+    
+    if (dados.usado) {
+      throw new Error('Código já utilizado');
     }
     
     // Marcar código como usado
-    await database.ref('activation_codes/' + code).update({
-      active: false,
+    await codigoRef.update({
+      usado: true,
       usedAt: new Date().toISOString(),
-      usedBy: 'user-' + Date.now()
     });
     
     // Salvar ativação localmente
