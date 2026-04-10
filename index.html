@@ -163,13 +163,13 @@
 <body>
 
 <!-- LOADING -->
-<div class="activation-screen hidden" id="loadingScreen">
+<div class="activation-screen" id="loadingScreen">
   <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo" class="activation-logo">
   <div class="activation-subtitle" style="margin-top:16px">Carregando...</div>
 </div>
 
 <!-- LOGIN -->
-<div class="activation-screen" id="loginScreen">
+<div class="activation-screen hidden" id="loginScreen">
   <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo" class="activation-logo">
   <div class="activation-title">Cobrança Fácil</div>
   <div class="activation-subtitle" style="color:#c9a84c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Dominium Recovery</div>
@@ -663,7 +663,12 @@ function mostrarLogin(msg) {
 }
 
 auth.onAuthStateChanged(user => {
-  if (user) mostrarApp();
+  if (user) {
+    mostrarApp();
+  } else {
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
 });
 
 function switchLoginTab(tab) {
