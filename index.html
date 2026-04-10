@@ -1508,24 +1508,11 @@ function fecharOverlay(e, id) {
   }
 }
 
-// MODAL COBRAR
-<div class="modal-overlay" id="modalCobrarOverlay" onclick="fecharModalCobrar(event)">
-  <div class="modal">
-    <div class="modal-header">💬 Enviar Cobrança</div>
-    <div class="form-group">
-      <label>Telefone</label>
-      <input type="tel" id="cobrarTelefone" readonly>
-    </div>
-    <div class="form-group">
-      <label>Mensagem</label>
-      <textarea id="cobrarMsgPreview" rows="8"></textarea>
-    </div>
-    <div class="modal-buttons">
-      <button class="btn btn-secondary" onclick="closeModalCobrar()">Cancelar</button>
-      <button class="btn btn-primary" onclick="enviarCobrar()">📲 Enviar WhatsApp</button>
-    </div>
-  </div>
-</div>
+function fecharOverlay(e, id) {
+  if (e.target === document.getElementById(id)) {
+    document.getElementById(id).classList.remove('open');
+  }
+}
 
 setTimeout(() => {
   const loading = document.getElementById('loadingScreen');
@@ -1537,3 +1524,5 @@ setTimeout(() => {
 </script>
 </body>
 </html>
+
+
