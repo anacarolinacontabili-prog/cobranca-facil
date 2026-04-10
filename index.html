@@ -663,9 +663,16 @@ function mostrarLogin(msg) {
 }
 
 auth.onAuthStateChanged(user => {
-  if (user) {
-    mostrarApp();
-  } else {
+  console.log('Auth mudou:', user);
+  try {
+    if (user) {
+      mostrarApp();
+    } else {
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+  } catch(e) {
+    console.log('Erro:', e);
     document.getElementById('loadingScreen').classList.add('hidden');
     document.getElementById('loginScreen').classList.remove('hidden');
   }
@@ -693,9 +700,12 @@ async function esqueceuSenha() {
     err.textContent = '✅ Email de recuperação enviado! Verifique sua caixa de entrada.';
     err.classList.add('show');
     setTimeout(() => {
-      err.classList.remove('show');
-      err.style.color = '';
-    }, 5000);
+  const loading = document.getElementById('loadingScreen');
+  if (loading && !loading.classList.contains('hidden')) {
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+  }
+}, 3000);
   } catch(e) {
     const msgs = {
       'auth/user-not-found':         '❌ E-mail não cadastrado.',
