@@ -683,21 +683,26 @@ async function entrar() {
     err.classList.add('show');
     return;
   }
-  btn.textContent = '⏳ Entrando...';
+btn.textContent = '⏳ Entrando...';
   btn.disabled = true;
   try {
     await auth.signInWithEmailAndPassword(email, senha);
+    showToast('✅ Bem vindo!');
   } catch(e) {
+    console.log('Erro código:', e.code);
     const msgs = {
-      'auth/invalid-credential':     'E-mail ou senha incorretos.',
-      'auth/wrong-password':         'Senha incorreta.',
-      'auth/user-not-found':         'E-mail não cadastrado.',
-      'auth/invalid-email':          'E-mail inválido.',
-      'auth/too-many-requests':      '⚠️ Muitas tentativas. Aguarde.',
+      'auth/invalid-credential':     '❌ E-mail ou senha incorretos.',
+      'auth/wrong-password':         '❌ Senha incorreta.',
+      'auth/user-not-found':         '❌ E-mail não cadastrado.',
+      'auth/invalid-email':          '❌ E-mail inválido.',
+      'auth/too-many-requests':      '⚠️ Muitas tentativas. Aguarde alguns minutos.',
       'auth/network-request-failed': '❌ Sem conexão com internet.',
-      'auth/user-disabled':          '❌ Conta desativada.'
+      'auth/user-disabled':          '❌ Conta desativada.',
+      'auth/missing-password':       '❌ Digite sua senha.',
+      'auth/weak-password':          '❌ Senha muito fraca.',
+      'auth/email-already-in-use':   '❌ E-mail já cadastrado.'
     };
-    err.textContent = msgs[e.code] || ('Erro: ' + e.code);
+    err.textContent = msgs[e.code] || ('❌ Erro: ' + e.code);
     err.classList.add('show');
     btn.textContent = '🔐 Entrar';
     btn.disabled = false;
