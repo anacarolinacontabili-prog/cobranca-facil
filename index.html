@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -571,18 +571,79 @@
 
   .chevron { transition: transform 0.2s; }
   .chevron.open { transform: rotate(180deg); }
+
+  /* ===== STATUS SELECTOR ===== */
+  .status-selector { position: relative; display: inline-block; }
+  .status-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+    cursor: pointer; border: none; font-family: 'Inter', sans-serif; letter-spacing: 0.3px;
+  }
+  .status-btn::after { content: ' ▾'; font-size: 9px; }
+  .status-dropdown {
+    display: none; position: absolute; right: 0; top: calc(100% + 6px);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 6px; z-index: 500; min-width: 190px; box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  }
+  .status-dropdown.open { display: block; }
+  .status-option {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s; color: var(--text);
+  }
+  .status-option:hover { background: var(--surface2); }
+
+  /* ===== MODAL NEGOCIADO (ÁUDIO) ===== */
+  .audio-recorder {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; margin: 12px 0;
+  }
+  .audio-recorder-label {
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+  }
+  .audio-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn-record {
+    display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;
+    border-radius: 10px; border: none; font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-record.iniciar { background: #7f1d1d; color: #fca5a5; }
+  .btn-record.iniciar:hover { background: #991b1b; }
+  .btn-record.parar { background: #052e16; color: #86efac; }
+  .btn-record.parar:hover { background: #14532d; }
+  @keyframes pulseRec { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .gravando { animation: pulseRec 1s infinite; }
+  audio { width: 100%; margin-top: 10px; border-radius: 8px; }
+
+  /* ===== MODAL PARCIAL ===== */
+  .parcial-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .parcial-stat {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px; text-align: center;
+  }
+  .parcial-stat-val { font-size: 18px; font-weight: 800; font-family: 'DM Mono', monospace; margin-bottom: 2px; }
+  .parcial-stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .historico-list { max-height: 140px; overflow-y: auto; margin-top: 8px; }
+  .historico-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 10px; background: var(--surface2); border-radius: 8px;
+    margin-bottom: 6px; font-size: 13px; border: 1px solid var(--border);
+  }
+  .historico-data { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; }
+  .historico-val { color: #22c55e; font-weight: 700; font-family: 'DM Mono', monospace; }
 </style>
 </head>
 <body>
 
 <!-- LOADING -->
-<div class="activation-screen" id="loadingScreen">
+<div class="activation-screen hidden" id="loadingScreen">
   <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo" class="activation-logo">
   <div class="activation-subtitle" style="margin-top:16px">Carregando...</div>
 </div>
 
 <!-- TELA DE LOGIN -->
-<div class="activation-screen hidden" id="loginScreen">
+<div class="activation-screen" id="loginScreen">
   <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo Dominium Recovery" class="activation-logo">
   <div class="activation-title">Cobrança Fácil</div>
   <div class="activation-subtitle" style="color:#c9a84c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Dominium Recovery</div>
@@ -829,6 +890,96 @@
   </div>
 </div>
 
+<!-- MODAL NEGOCIADO (TEXTO + ÁUDIO) -->
+<div class="modal-overlay" id="modalNegociadoOverlay" onclick="fecharOverlay(event,'modalNegociadoOverlay')">
+  <div class="modal">
+    <div class="modal-header">🤝 Registrar Negociação</div>
+    <input type="hidden" id="negCidx">
+    <input type="hidden" id="negDidx">
+
+    <div id="negDebtInfo" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">DÉBITO</div>
+      <div id="negDebtDesc" style="font-size:15px;font-weight:700;"></div>
+      <div id="negDebtValor" style="font-size:18px;font-weight:800;color:var(--red);font-family:'DM Mono',monospace;margin-top:2px;"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Observação da Negociação</label>
+      <textarea id="negObs" rows="3" placeholder="Descreva o acordo..."></textarea>
+    </div>
+
+    <div class="audio-recorder">
+      <div class="audio-recorder-label">🎤 Gravação de Áudio (opcional)</div>
+      <div class="audio-controls">
+        <button class="btn-record iniciar" id="btnIniciarGrav" onclick="iniciarGravacao()">🎤 Gravar</button>
+        <button class="btn-record parar" id="btnPararGrav" onclick="pararGravacao()" style="display:none">⏹ Parar</button>
+        <span id="statusGrav" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <audio id="audioPlayback" controls style="display:none"></audio>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="document.getElementById('modalNegociadoOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarNegociacao()" style="background:#1e3a5f;color:#60a5fa;">🤝 Salvar Negociação</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PAGAMENTO PARCIAL -->
+<div class="modal-overlay" id="modalParcialOverlay" onclick="fecharOverlay(event,'modalParcialOverlay')">
+  <div class="modal">
+    <div class="modal-header">🟠 Pagamento Parcial</div>
+    <input type="hidden" id="parCidx">
+    <input type="hidden" id="parDidx">
+
+    <div class="parcial-summary">
+      <div class="parcial-stat">
+        <div class="parcial-stat-val" id="parValorTotal" style="color:var(--muted)">R$ 0,00</div>
+        <div class="parcial-stat-lbl">Total</div>
+      </div>
+      <div class="parcial-stat">
+        <div class="parcial-stat-val" id="parValorRestante" style="color:var(--red)">R$ 0,00</div>
+        <div class="parcial-stat-lbl">Restante</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Valor Pago Agora (R$)</label>
+      <input type="number" id="parValorPago" step="0.01" placeholder="0,00" oninput="calcularRestante()">
+    </div>
+    <div id="parPreview" style="display:none;background:var(--green-dim);border:1px solid #3d2e0a;border-radius:8px;padding:10px 12px;font-size:12px;color:var(--accent);margin-bottom:12px;"></div>
+
+    <div class="form-group">
+      <label>Forma de Pagamento</label>
+      <div class="pay-method-grid" style="margin:8px 0 0">
+        <button class="pay-method-btn disabled" id="parPayDinheiro">
+          <span class="pay-icon">💵</span>Dinheiro
+          <span class="pay-badge-soon">EM BREVE</span>
+        </button>
+        <button class="pay-method-btn disabled" id="parPayCartao">
+          <span class="pay-icon">💳</span>Cartão
+          <span class="pay-badge-soon">EM BREVE</span>
+        </button>
+        <button class="pay-method-btn" id="parPayPix" onclick="selecionarMetodoParcial('pix')">
+          <span class="pay-icon">⚡</span>PIX
+        </button>
+      </div>
+    </div>
+
+    <div style="margin-top:8px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">📊 Histórico de Pagamentos</div>
+      <div class="historico-list" id="parHistorico">
+        <p style="color:var(--muted);font-size:13px">Nenhum pagamento registrado.</p>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="document.getElementById('modalParcialOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarParcial()" style="background:#f59e0b;color:#000;">🟠 Registrar Pagamento</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PAGAMENTO -->
 <div class="modal-overlay" id="modalPagamentoOverlay" onclick="fecharModalPagamento(event)">
   <div class="modal">
@@ -986,9 +1137,8 @@ function mostrarLogin(msg) {
 auth.onAuthStateChanged(user => {
   if (user) {
     mostrarApp();
-  } else {
-    mostrarLogin();
   }
+  // login já aparece por padrão, não precisa chamar mostrarLogin()
 });
 
 // ========== TABS LOGIN ==========
@@ -1210,33 +1360,48 @@ function renderClientes() {
     const totalPendente = c.debitos.filter(d => !d.pago).reduce((s, d) => s + d.valor, 0);
     const status = getStatus(c);
     
-    const statusLabels = { pendente: 'PENDENTE', pago: 'PAGO', parcial: 'PARCIAL', negociado: 'NEGOCIADO' };
-    const statusLabel = statusLabels[status] || 'PENDENTE';
+    // Status badge colors
+    const statusCfg = {
+      pendente:  { label:'EM ABERTO', bg:'var(--red-dim)',  color:'var(--red)',  icon:'🔴' },
+      pago:      { label:'PAGO',      bg:'#2a1f08',         color:'#c9a84c',     icon:'✅' },
+      parcial:   { label:'PARCIAL',   bg:'#78350f',         color:'var(--yellow)',icon:'🟠' },
+      negociado: { label:'NEGOCIADO', bg:'#1e3a5f',         color:'#60a5fa',     icon:'🤝' }
+    };
+    const sc = statusCfg[status] || statusCfg.pendente;
     const totalClass = status === 'negociado' ? 'parcial' : status;
-    const badgeClass = 'badge-' + status;
 
     const debitosHTML = c.debitos.map((d, di) => {
       const isNeg = d.negociado && !d.pago;
-      const icon = d.pago ? '✅' : (isNeg ? '🤝' : '💳');
-      const valClass = d.pago ? 'pago' : (isNeg ? '' : 'pendente');
-      const valStyle = isNeg ? 'color:var(--yellow)' : '';
-      const valDisplay = isNeg && d.valorNegociado
-        ? formatarValor(d.valorNegociado) + ' <span style="font-size:11px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valor) + '</span>'
-        : formatarValor(d.valor);
-      const negTag = isNeg ? ' <span style="font-size:9px;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;font-weight:700;vertical-align:middle">NEG</span>' : '';
+      const isParcial = d.pagamentos && d.pagamentos.length > 0 && !d.pago;
+      const icon = d.pago ? '✅' : (isNeg ? '🤝' : (isParcial ? '🟠' : '💳'));
+      const valClass = d.pago ? 'pago' : (isNeg ? '' : (isParcial ? '' : 'pendente'));
+      const valStyle = isNeg ? 'color:var(--yellow)' : (isParcial ? 'color:var(--yellow)' : '');
+      const valorRestante = isParcial ? (d.valor - (d.pagamentos||[]).reduce((s,p)=>s+p.valor,0)) : d.valor;
+      const valDisplay = isParcial
+        ? formatarValor(valorRestante) + ' <span style="font-size:10px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valor) + '</span>'
+        : (isNeg && d.valorNegociado ? formatarValor(d.valorNegociado) + ' <span style="font-size:10px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valor) + '</span>' : formatarValor(d.valor));
+      const tagNeg = isNeg ? ' <span style="font-size:9px;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;font-weight:700;">NEG</span>' : '';
+      const tagPar = isParcial ? ' <span style="font-size:9px;background:#78350f;color:var(--yellow);padding:1px 5px;border-radius:6px;font-weight:700;">PARCIAL</span>' : '';
       const obsLine = [d.data ? formatarData(d.data) : '', d.obs ? '· '+d.obs : '', d.obsNegociado ? '🤝 '+d.obsNegociado : ''].filter(Boolean).join(' ');
+      // Mini histórico de parciais
+      const historicoHtml = isParcial ? '<div style="margin-top:6px;font-size:11px;color:var(--muted);">' +
+        (d.pagamentos||[]).map(p=>`<span>📅 ${p.data}: <strong style="color:#22c55e">${formatarValor(p.valor)}</strong></span>`).join(' · ') + '</div>' : '';
+      // Áudio negociação
+      const audioHtml = (isNeg && d.audioUrl) ? `<audio controls src="${d.audioUrl}" style="width:100%;margin-top:6px;height:32px;"></audio>` : '';
       return `
         <div class="debt-item ${d.pago ? 'pago' : ''}">
           <div class="debt-icon">${icon}</div>
-          <div class="debt-info">
-            <div class="debt-desc">${d.desc}${negTag}</div>
+          <div class="debt-info" style="min-width:0;flex:1;">
+            <div class="debt-desc">${d.desc}${tagNeg}${tagPar}</div>
             <div class="debt-date">${obsLine}</div>
+            ${historicoHtml}
+            ${audioHtml}
           </div>
-          <div class="debt-valor ${valClass}" style="${valStyle}">${valDisplay}</div>
+          <div class="debt-valor ${valClass}" style="${valStyle};flex-shrink:0">${valDisplay}</div>
           <div class="debt-actions">
             ${d.pago
-              ? `<button class="btn btn-small" style="background:#052e16;color:#22c55e;border:1px solid #166534;font-size:10px;font-weight:700;padding:5px 9px;" onclick="desmarcarPago(${realIdx},${di})" title="Clique para desmarcar">✅ PAGO</button>`
-              : `<button class="btn btn-small" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-size:10px;font-weight:700;padding:5px 9px;" onclick="abrirModalPagamento(${realIdx},${di})" title="Marcar como pago">○ PAGO</button>`
+              ? `<button class="btn btn-small" style="background:#052e16;color:#22c55e;border:1px solid #166534;font-size:10px;font-weight:700;padding:5px 9px;" onclick="desmarcarPago(${realIdx},${di})" title="Desmarcar">✅</button>`
+              : `<button class="btn btn-small" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-size:10px;font-weight:700;padding:5px 9px;" onclick="abrirSeletorStatus(${realIdx},${di})" title="Alterar status">⚡</button>`
             }
             <button class="btn btn-danger btn-small" onclick="deletarDebito(${realIdx},${di})">🗑</button>
           </div>
@@ -1244,6 +1409,7 @@ function renderClientes() {
       `;
     }).join('');
 
+    const telLimpo = c.telefone.replace(/\D/g,'');
     return `
       <div class="client-card" id="card-${realIdx}">
         <div class="client-header" onclick="toggleCard(${realIdx})">
@@ -1252,16 +1418,15 @@ function renderClientes() {
             <div class="client-name">${c.nome}</div>
             <div class="client-phone" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
               <span>📞 ${c.telefone}</span>
-              <a href="tel:${c.telefone.replace(/\D/g,'')}" onclick="event.stopPropagation()" 
-                 style="display:inline-flex;align-items:center;gap:4px;background:#1a2e1a;color:#22c55e;border:1px solid #166534;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;"
-                 title="Ligar agora">
+              <a href="tel:${telLimpo}" onclick="event.stopPropagation()"
+                 style="display:inline-flex;align-items:center;gap:4px;background:#1a2e1a;color:#22c55e;border:1px solid #166534;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">
                 📲 Ligar
               </a>
             </div>
           </div>
           <div class="client-summary">
             <div class="client-total ${totalClass}">${formatarValor(totalPendente)}</div>
-            <div><span class="client-badge ${badgeClass}">${statusLabel}</span></div>
+            <div><span class="client-badge" style="background:${sc.bg};color:${sc.color}">${sc.icon} ${sc.label}</span></div>
           </div>
           <span class="chevron" id="chev-${realIdx}">▼</span>
         </div>
@@ -1269,7 +1434,7 @@ function renderClientes() {
           <div class="debt-list">${debitosHTML}</div>
           <div class="action-row">
             <button class="btn btn-secondary btn-small" onclick="abrirModal(${realIdx})">➕ Débito</button>
-            <a href="tel:${c.telefone.replace(/\D/g,'')}" class="btn btn-small" 
+            <a href="tel:${telLimpo}" class="btn btn-small"
                style="background:#1a2e1a;color:#22c55e;border:1px solid #166534;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
               📲 Ligar
             </a>
@@ -1772,6 +1937,266 @@ function listar() {
 }
 
 // Firebase onAuthStateChanged acima cuida do estado de login
+
+// ===================================================
+// SELETOR DE STATUS (dropdown por débito)
+// ===================================================
+function abrirSeletorStatus(cidx, didx) {
+  // Fecha qualquer dropdown aberto
+  document.querySelectorAll('.status-dropdown-popup').forEach(el => el.remove());
+
+  const d = clientes[cidx].debitos[didx];
+  const popup = document.createElement('div');
+  popup.className = 'status-dropdown open status-dropdown-popup';
+  popup.style.cssText = 'position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
+
+  const opcoes = [
+    { key:'emaberto',  icon:'🔴', label:'Em Aberto',       fn: () => marcarEmAberto(cidx, didx) },
+    { key:'pago',      icon:'✅', label:'Pago',             fn: () => abrirModalPagamento(cidx, didx) },
+    { key:'negociado', icon:'🤝', label:'Negociado',        fn: () => abrirModalNegociado(cidx, didx) },
+    { key:'parcial',   icon:'🟠', label:'Pagamento Parcial',fn: () => abrirModalParcial(cidx, didx) },
+  ];
+
+  opcoes.forEach(op => {
+    const el = document.createElement('div');
+    el.className = 'status-option';
+    el.innerHTML = `${op.icon} ${op.label}`;
+    el.onclick = (e) => { e.stopPropagation(); popup.remove(); op.fn(); };
+    popup.appendChild(el);
+  });
+
+  // Posicionar próximo ao botão que foi clicado (usa evento global)
+  const btn = event.target;
+  const rect = btn.getBoundingClientRect();
+  popup.style.top = (rect.bottom + 6) + 'px';
+  popup.style.left = Math.max(8, rect.left - 100) + 'px';
+  document.body.appendChild(popup);
+
+  // Fechar ao clicar fora
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!popup.contains(e.target)) { popup.remove(); document.removeEventListener('click', handler); }
+    });
+  }, 50);
+}
+
+function marcarEmAberto(cidx, didx) {
+  const d = clientes[cidx].debitos[didx];
+  d.pago = false;
+  d.negociado = false;
+  d.obsNegociado = '';
+  d.audioUrl = '';
+  d.pagamentos = [];
+  salvarStorage();
+  renderClientes();
+  showToast('🔴 Marcado como Em Aberto');
+}
+
+// ===================================================
+// MODAL NEGOCIADO (texto + áudio)
+// ===================================================
+let mediaRecorderGlobal = null;
+let audioChunks = [];
+let audioBlobGlobal = null;
+
+function abrirModalNegociado(cidx, didx) {
+  const d = clientes[cidx].debitos[didx];
+  document.getElementById('negCidx').value = cidx;
+  document.getElementById('negDidx').value = didx;
+  document.getElementById('negDebtDesc').textContent = d.desc;
+  document.getElementById('negDebtValor').textContent = formatarValor(d.valor);
+  document.getElementById('negObs').value = d.obsNegociado || '';
+  // Reset áudio
+  audioBlobGlobal = null;
+  audioChunks = [];
+  document.getElementById('audioPlayback').style.display = 'none';
+  document.getElementById('audioPlayback').src = '';
+  document.getElementById('btnIniciarGrav').style.display = '';
+  document.getElementById('btnPararGrav').style.display = 'none';
+  document.getElementById('statusGrav').textContent = d.audioUrl ? '✅ Áudio anterior salvo' : '';
+  if (d.audioUrl) {
+    document.getElementById('audioPlayback').src = d.audioUrl;
+    document.getElementById('audioPlayback').style.display = 'block';
+  }
+  document.getElementById('modalNegociadoOverlay').classList.add('open');
+}
+
+async function iniciarGravacao() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorderGlobal = new MediaRecorder(stream);
+    mediaRecorderGlobal.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorderGlobal.onstop = () => {
+      audioBlobGlobal = new Blob(audioChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(audioBlobGlobal);
+      const audio = document.getElementById('audioPlayback');
+      audio.src = url;
+      audio.style.display = 'block';
+      document.getElementById('statusGrav').textContent = '✅ Gravação concluída';
+    };
+    mediaRecorderGlobal.start();
+    document.getElementById('btnIniciarGrav').style.display = 'none';
+    document.getElementById('btnPararGrav').style.display = '';
+    document.getElementById('btnPararGrav').classList.add('gravando');
+    document.getElementById('statusGrav').textContent = '🔴 Gravando...';
+  } catch(e) {
+    showToast('❌ Permissão de microfone negada');
+  }
+}
+
+function pararGravacao() {
+  if (mediaRecorderGlobal && mediaRecorderGlobal.state !== 'inactive') {
+    mediaRecorderGlobal.stop();
+    mediaRecorderGlobal.stream.getTracks().forEach(t => t.stop());
+  }
+  document.getElementById('btnIniciarGrav').style.display = '';
+  document.getElementById('btnPararGrav').style.display = 'none';
+  document.getElementById('btnPararGrav').classList.remove('gravando');
+}
+
+function salvarNegociacao() {
+  const cidx = parseInt(document.getElementById('negCidx').value);
+  const didx = parseInt(document.getElementById('negDidx').value);
+  const obs = document.getElementById('negObs').value.trim();
+  const d = clientes[cidx].debitos[didx];
+
+  d.negociado = true;
+  d.pago = false;
+  d.obsNegociado = obs;
+  d.dataNegociacao = new Date().toLocaleDateString('pt-BR');
+
+  // Salva áudio como dataURL (base64) para persistência
+  if (audioBlobGlobal) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      d.audioUrl = reader.result;
+      salvarStorage();
+      renderClientes();
+    };
+    reader.readAsDataURL(audioBlobGlobal);
+  } else {
+    salvarStorage();
+    renderClientes();
+  }
+
+  document.getElementById('modalNegociadoOverlay').classList.remove('open');
+  showToast('🤝 Negociação registrada!');
+}
+
+// ===================================================
+// MODAL PAGAMENTO PARCIAL + HISTÓRICO
+// ===================================================
+let metodoParSelecionado = null;
+
+function abrirModalParcial(cidx, didx) {
+  const d = clientes[cidx].debitos[didx];
+  document.getElementById('parCidx').value = cidx;
+  document.getElementById('parDidx').value = didx;
+  document.getElementById('parValorPago').value = '';
+  document.getElementById('parPreview').style.display = 'none';
+  metodoParSelecionado = null;
+  document.querySelectorAll('#modalParcialOverlay .pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
+
+  // Inicializa pagamentos se não existir
+  if (!d.pagamentos) d.pagamentos = [];
+
+  const totalOriginal = d.valorOriginal || d.valor;
+  if (!d.valorOriginal) d.valorOriginal = d.valor; // guarda valor original
+  const totalPago = d.pagamentos.reduce((s,p) => s + p.valor, 0);
+  const restante = totalOriginal - totalPago;
+
+  document.getElementById('parValorTotal').textContent = formatarValor(totalOriginal);
+  document.getElementById('parValorRestante').textContent = formatarValor(restante);
+
+  // Renderiza histórico
+  const hist = document.getElementById('parHistorico');
+  if (d.pagamentos.length === 0) {
+    hist.innerHTML = '<p style="color:var(--muted);font-size:13px">Nenhum pagamento registrado.</p>';
+  } else {
+    hist.innerHTML = d.pagamentos.map((p,i) => `
+      <div class="historico-item">
+        <span>${p.forma ? p.forma.toUpperCase() : 'PIX'} · <span class="historico-data">${p.data}</span></span>
+        <span class="historico-val">${formatarValor(p.valor)}</span>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('modalParcialOverlay').classList.add('open');
+}
+
+function calcularRestante() {
+  const cidx = parseInt(document.getElementById('parCidx').value);
+  const didx = parseInt(document.getElementById('parDidx').value);
+  if (isNaN(cidx) || isNaN(didx)) return;
+  const d = clientes[cidx].debitos[didx];
+  const totalOriginal = d.valorOriginal || d.valor;
+  const totalPago = (d.pagamentos||[]).reduce((s,p) => s + p.valor, 0);
+  const restante = totalOriginal - totalPago;
+  const agora = parseFloat(document.getElementById('parValorPago').value) || 0;
+  const novo = restante - agora;
+  const preview = document.getElementById('parPreview');
+  if (agora > 0) {
+    preview.style.display = 'block';
+    preview.innerHTML = `💡 Pagando <strong>${formatarValor(agora)}</strong> → Restará <strong>${formatarValor(Math.max(0, novo))}</strong>`;
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+function selecionarMetodoParcial(metodo) {
+  metodoParSelecionado = metodo;
+  document.querySelectorAll('#modalParcialOverlay .pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
+  document.getElementById('parPay' + metodo.charAt(0).toUpperCase() + metodo.slice(1)).classList.add('selected');
+}
+
+function confirmarParcial() {
+  const cidx = parseInt(document.getElementById('parCidx').value);
+  const didx = parseInt(document.getElementById('parDidx').value);
+  const valor = parseFloat(document.getElementById('parValorPago').value);
+
+  if (!valor || valor <= 0) { showToast('⚠️ Informe o valor pago!'); return; }
+  if (!metodoParSelecionado) { showToast('⚠️ Selecione a forma de pagamento!'); return; }
+
+  const d = clientes[cidx].debitos[didx];
+  if (!d.pagamentos) d.pagamentos = [];
+  if (!d.valorOriginal) d.valorOriginal = d.valor;
+
+  const totalPagoAntes = d.pagamentos.reduce((s,p) => s + p.valor, 0);
+  const restanteAntes = d.valorOriginal - totalPagoAntes;
+
+  if (valor > restanteAntes) { showToast('⚠️ Valor maior que o restante (' + formatarValor(restanteAntes) + ')!'); return; }
+
+  d.pagamentos.push({
+    valor,
+    data: new Date().toLocaleDateString('pt-BR'),
+    forma: metodoParSelecionado
+  });
+
+  const novoRestante = d.valorOriginal - d.pagamentos.reduce((s,p) => s + p.valor, 0);
+
+  if (novoRestante <= 0) {
+    d.pago = true;
+    d.valor = d.valorOriginal;
+    showToast('✅ Débito totalmente quitado!');
+  } else {
+    d.pago = false;
+    d.valor = novoRestante; // atualiza valor restante para exibição
+    showToast(`🟠 Parcial registrado! Restam ${formatarValor(novoRestante)}`);
+  }
+
+  salvarStorage();
+  renderClientes();
+  document.getElementById('modalParcialOverlay').classList.remove('open');
+}
+
+// Fechar modal ao clicar no overlay
+function fecharOverlay(e, id) {
+  if (e.target === document.getElementById(id)) {
+    document.getElementById(id).classList.remove('open');
+  }
+}
+
 
 // FALLBACK: Se Firebase não responder em 3 segundos, mostra login
 setTimeout(() => {
