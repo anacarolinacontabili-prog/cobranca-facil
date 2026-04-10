@@ -188,7 +188,11 @@
         <input type="password" id="loginSenha" class="activation-input" placeholder="••••••••" style="margin-bottom:0;text-transform:none;letter-spacing:normal;font-size:15px;">
       </div>
       <button class="activation-btn" id="btnEntrar" onclick="entrar()">🔐 Entrar</button>
-      <div class="activation-error" id="loginError"></div>
+   <div class="activation-error" id="loginError"></div>
+   <div style="text-align:center;margin-top:16px;">
+   <span onclick="esqueceuSenha()" style="color:#c9a84c;font-size:13px;cursor:pointer;text-decoration:underline;">
+    🔑 Esqueci minha senha
+  </span>
     </div>
     <div id="formAtivar" style="display:none">
       <div style="margin-bottom:14px">
@@ -670,7 +674,34 @@ function switchLoginTab(tab) {
   document.getElementById('tabEntrar').style.cssText = tab==='entrar' ? on : off;
   document.getElementById('tabAtivar').style.cssText  = tab==='ativar'  ? on : off;
 }
-
+async function esqueceuSenha() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const err   = document.getElementById('loginError');
+  if (!email) {
+    err.textContent = '⚠️ Digite seu e-mail primeiro!';
+    err.classList.add('show');
+    return;
+  }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    err.style.color = '#22c55e';
+    err.textContent = '✅ Email de recuperação enviado! Verifique sua caixa de entrada.';
+    err.classList.add('show');
+    setTimeout(() => {
+      err.classList.remove('show');
+      err.style.color = '';
+    }, 5000);
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found':         '❌ E-mail não cadastrado.',
+      'auth/invalid-email':          '❌ E-mail inválido.',
+      'auth/network-request-failed': '❌ Sem conexão com internet.'
+    };
+    err.style.color = '';
+    err.textContent = msgs[e.code] || ('❌ Erro: ' + e.code);
+    err.classList.add('show');
+  }
+}
 async function entrar() {
   const email = document.getElementById('loginEmail').value.trim();
   const senha = document.getElementById('loginSenha').value;
