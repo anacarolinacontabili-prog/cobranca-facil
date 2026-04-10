@@ -1728,14 +1728,72 @@ function cadastrarPorVoz() {
   const rec = new (window.SpeechRecognition||window.webkitSpeechRecognition)();
   rec.lang = 'pt-BR';
   rec.start();
-  showToast('🎤 Fale agora...');
+  showToast('🎤 Fale: Nome... Telefone...');
   rec.onresult = function(e) {
-    const texto  = e.results[0][0].transcript.toLowerCase();
+    const texto = e.results[0][0].transcript.toLowerCase();
     const partes = texto.split(' ');
-    document.getElementById('nome').value     = partes[1]||'';
-    document.getElementById('telefone').value = partes[3]||'';
-    document.getElementById('valor').value    = partes[5]||'';
+    const idxTel = partes.findIndex(p=>p==='telefone'||p==='fone'||p==='tel');
+    if (idxTel > 0) {
+      document.getElementById('nome').value     = partes.slice(0,idxTel).join(' ');
+      document.getElementById('telefone').value = partes.slice(idxTel+1).join('').replace(/\D/g,'');
+    } else {
+      document.getElementById('nome').value = texto;
+    }
     showToast('✅ Dados capturados!');
+  };
+  rec.onerror = function() {
+    showToast('❌ Erro ao capturar voz');
+  };
+}
+
+function preencherDebitoPorVoz() {
+  if (!('SpeechRecognition' in window||'webkitSpeechRecognition' in window)) {
+    showToast('❌ Voz não suportada neste navegador'); return;
+  }
+  showToast('🎤 Fale o débito...');
+  const rec = new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+  rec.lang = 'pt-BR';
+  rec.start();
+  rec.onresult = function(e) {
+    const texto = e.results[0][0].transcript.toLowerCase();
+    const regexValor = /valor\s+(\d+[\.,]?\d*)/i;
+    const matchValor = texto.match(regexValor);
+    if (matchValor) {
+      document.getElementById('valor').value = matchValor[1].replace(',','.');
+    }
+    const regexDesc = /descri[çc][aã]o\s+(.+?)(?:\s+valor|\s+vencimento|\s+observa|\s+obs|$)/i;
+    const matchDesc = texto.match(regexDesc);
+    if (matchDesc) {
+      document.getElementById('desc').value = matchDesc[1].trim();
+    }
+    const regexData = /vencimento\s+(\d{1,2})[\/\-\s](\d{1,2})(?:[\/\-\s](\d{2,4}))?/i;
+    const matchData = texto.match(regexData);
+    if (matchData) {
+      const dia = matchData[1].padStart(2,'0');
+      const mes = matchData[2].padStart(2,'0');
+      const ano = matchData[3]
+        ? (matchData[3].length===2 ? '20'+matchData[3] : matchData[3])
+        : new Date().getFullYear();
+      document.getElementById('data').value = `${ano}-${mes}-${dia}`;
+    }
+    const regexObs = /(?:observa[çc][aã]o|obs)\s+(.+?)(?:\s+valor|\s+vencimento|\s+descri|$)/i;
+    const matchObs = texto.match(regexObs);
+    if (matchObs) {
+      document.getElementById('obs').value = matchObs[1].trim();
+    }
+    let campos = [];
+    if (matchValor) campos.push('valor');
+    if (matchDesc)  campos.push('descrição');
+    if (matchData)  campos.push('vencimento');
+    if (matchObs)   campos.push('observação');
+    if (campos.length > 0) {
+      showToast('✅ Capturado: '+campos.join(', '));
+    } else {
+      showToast('⚠️ Não entendi. Tente novamente!');
+    }
+  };
+  rec.onerror = function() {
+    showToast('❌ Erro ao capturar voz');
   };
 }
 
