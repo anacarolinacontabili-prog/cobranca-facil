@@ -646,11 +646,16 @@ const auth = firebase.auth();
 const db2  = firebase.firestore();
 
 function mostrarApp() {
-  document.getElementById('loadingScreen').classList.add('hidden');
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('appContainer').classList.add('active');
-  listar();
-  atualizarHeaderTotal();
+  console.log('mostrarApp chamado!');
+  try {
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appContainer').classList.add('active');
+    listar();
+    atualizarHeaderTotal();
+  } catch(e) {
+    console.log('Erro mostrarApp:', e);
+  }
 }
 function mostrarLogin(msg) {
   document.getElementById('loadingScreen').classList.add('hidden');
@@ -1815,8 +1820,12 @@ function registrarDinheiro(idx) {
   setTimeout(()=>selecionarPagamento('dinheiro'), 300);
 }
 function listar() {
-  renderClientes();
-  renderResumo();
+  try {
+    renderClientes();
+    renderResumo();
+  } catch(e) {
+    console.log('Erro no listar:', e);
+  }
 }
 
 setTimeout(() => {
