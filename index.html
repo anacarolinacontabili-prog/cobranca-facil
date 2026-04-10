@@ -1757,11 +1757,61 @@ function preencherDebitoPorVoz() {
   rec.start();
   rec.onresult = function(e) {
     const texto = e.results[0][0].transcript.toLowerCase();
-    const regexValor = /valor\s+(\d+[\.,]?\d*)/i;
-    const matchValor = texto.match(regexValor);
-    if (matchValor) {
-      document.getElementById('valor').value = matchValor[1].replace(',','.');
+   const regexValor = /valor\s+(\d+[\.,]?\d*)/i;
+const matchValor = texto.match(regexValor);
+if (matchValor) {
+  document.getElementById('valor').value = matchValor[1].replace(',','.');
+}
+const valoresPorExtenso = {
+  'zero':0,'um':1,'dois':2,'três':3,'tres':3,'quatro':4,
+  'cinco':5,'seis':6,'sete':7,'oito':8,'nove':9,'dez':10,
+  'onze':11,'doze':12,'treze':13,'quatorze':14,'catorze':14,
+  'quinze':15,'dezesseis':16,'dezessete':17,'dezoito':18,'dezenove':19,
+  'vinte':20,'trinta':30,'quarenta':40,'cinquenta':50,'sessenta':60,
+  'setenta':70,'oitenta':80,'noventa':90,'cem':100,'cento':100,
+  'duzentos':200,'trezentos':300,'quatrocentos':400,'quinhentos':500,
+  'seiscentos':600,'setecentos':700,'oitocentos':800,'novecentos':900,
+  'mil':1000
+};
+if (!matchValor) {
+  const regexExtenso = /valor\s+([a-záàãâéêíóôõúç\s]+?)(?:\s+reais?|\s+descri|\s+venci|\s+obs|$)/i;
+  const matchExtenso = texto.match(regexExtenso);
+  if (matchExtenso) {
+    const palavras = matchExtenso[1].trim().split(/\s+/);
+    let total = 0;
+    let atual = 0;
+    palavras.forEach(p => {
+      const n = valoresPorExtenso[p.toLowerCase()];
+      if (n !== undefined) {
+        if (p.toLowerCase()==='mil') {
+          atual = atual===0 ? 1000 : atual*1000;
+          total += atual;
+          atual = 0;
+        } else if (n>=100) {
+          atual += n;
+        } else {
+          atual += n;
+        }
+      }
+    });
+    total += atual;
+    if (total>0) {
+      document.getElementById('valor').value = total.toFixed(2);
     }
+  }
+}
+const regexCentavos = /(\d+)\s+reais?\s+e?\s*(\d+)\s+centavos?/i;
+const matchCentavos = texto.match(regexCentavos);
+if (matchCentavos) {
+  const reais    = parseInt(matchCentavos[1]);
+  const centavos = parseInt(matchCentavos[2]);
+  document.getElementById('valor').value = (reais+centavos/100).toFixed(2);
+}
+const regexReais = /(\d+)\s+reais?/i;
+const matchReais = texto.match(regexReais);
+if (matchReais&&!matchValor&&!matchCentavos) {
+  document.getElementById('valor').value = parseFloat(matchReais[1]).toFixed(2);
+}
     const regexDesc = /descri[çc][aã]o\s+(.+?)(?:\s+valor|\s+vencimento|\s+observa|\s+obs|$)/i;
     const matchDesc = texto.match(regexDesc);
     if (matchDesc) {
