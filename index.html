@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -338,6 +338,110 @@
   .badge-pendente { background: var(--red-dim); color: var(--red); }
   .badge-pago { background: #2a1f08; color: #c9a84c; }
   .badge-parcial { background: #78350f; color: var(--yellow); }
+  .badge-negociado { background: #1e3a5f; color: #60a5fa; }
+
+  /* PAGAMENTO MODAL */
+  .pay-method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0 16px;
+  }
+  .pay-method-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 8px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .pay-method-btn .pay-icon { font-size: 24px; }
+  .pay-method-btn:hover:not(.disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--green-dim);
+  }
+  .pay-method-btn.selected {
+    border-color: #22c55e;
+    color: #22c55e;
+    background: #052e16;
+  }
+  .pay-method-btn.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .pay-badge-soon {
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 8px;
+    padding: 2px 5px;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .negociar-section {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 12px 0;
+  }
+  .negociar-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #60a5fa;
+    cursor: pointer;
+    user-select: none;
+  }
+  .negociar-toggle input[type=checkbox] { width: auto; accent-color: #60a5fa; }
+  .negociar-fields { display: none; margin-top: 12px; }
+  .negociar-fields.show { display: block; }
+  .info-negociacao {
+    background: var(--green-dim);
+    border: 1px solid #3d2e0a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 8px;
+    display: none;
+  }
+  .pix-info-box {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid #1e3a5f;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .pix-info-box .pix-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #60a5fa;
+    margin-bottom: 8px;
+  }
+  .pix-info-box .pix-dados {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+  }
 
   .client-body {
     display: none;
@@ -602,6 +706,7 @@
           <option value="pendente">Pendentes</option>
           <option value="pago">Pagos</option>
           <option value="parcial">Parcial</option>
+          <option value="negociado">Negociado</option>
         </select>
         <select id="filterSort" onchange="renderClientes()">
           <option value="nome">Nome A-Z</option>
@@ -625,10 +730,14 @@
           <div class="stat-label">Recebido</div>
         </div>
         <div class="stat-card">
+          <div class="stat-value" style="color:#60a5fa" id="sumNegociado">R$ 0,00</div>
+          <div class="stat-label">Negociado</div>
+        </div>
+        <div class="stat-card">
           <div class="stat-value" id="sumClientes">0</div>
           <div class="stat-label">Clientes</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="grid-column:span 2">
           <div class="stat-value" id="sumDebitos">0</div>
           <div class="stat-label">Débitos Abertos</div>
         </div>
@@ -720,6 +829,71 @@
   </div>
 </div>
 
+<!-- MODAL PAGAMENTO -->
+<div class="modal-overlay" id="modalPagamentoOverlay" onclick="fecharModalPagamento(event)">
+  <div class="modal">
+    <div class="modal-header">💰 Confirmar Pagamento</div>
+    <input type="hidden" id="pagCidx">
+    <input type="hidden" id="pagDidx">
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Débito</div>
+      <div id="pagDebtDesc" style="font-size:15px;font-weight:700;"></div>
+      <div id="pagDebtValor" style="font-size:22px;font-weight:800;color:var(--red);font-family:'DM Mono',monospace;margin-top:4px;"></div>
+    </div>
+
+    <!-- NEGOCIAÇÃO -->
+    <div class="negociar-section">
+      <label class="negociar-toggle">
+        <input type="checkbox" id="negociarCheck" onchange="toggleNegociar()">
+        🤝 Negociar / Pagamento parcial
+      </label>
+      <div class="negociar-fields" id="negociarFields">
+        <div class="form-group" style="margin-top:8px">
+          <label>Valor Negociado (R$)</label>
+          <input type="number" id="pagValorNegociado" step="0.01" placeholder="0,00" oninput="atualizarResumoPag()">
+        </div>
+        <div class="form-group">
+          <label>Observação</label>
+          <input type="text" id="pagObsNegociado" placeholder="Ex: Acordo parcial, desconto concedido...">
+        </div>
+        <div class="info-negociacao" id="resumoNegociacao"></div>
+      </div>
+    </div>
+
+    <!-- FORMA DE PAGAMENTO -->
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Forma de Pagamento</div>
+    <div class="pay-method-grid">
+      <button class="pay-method-btn disabled" id="payDinheiro">
+        <span class="pay-icon">💵</span>
+        Dinheiro
+        <span class="pay-badge-soon">EM BREVE</span>
+      </button>
+      <button class="pay-method-btn disabled" id="payCartao">
+        <span class="pay-icon">💳</span>
+        Cartão
+        <span class="pay-badge-soon">EM BREVE</span>
+      </button>
+      <button class="pay-method-btn" id="payPix" onclick="selecionarPagamento('pix')">
+        <span class="pay-icon">⚡</span>
+        PIX
+      </button>
+    </div>
+
+    <!-- BOX PIX -->
+    <div class="pix-info-box" id="pixInfoBox">
+      <div class="pix-label">⚡ DADOS PARA PAGAMENTO PIX</div>
+      <div class="pix-dados" id="pixInfoContent"></div>
+      <button class="btn btn-secondary" style="width:100%;margin-top:10px;font-size:12px" onclick="copiarChavePix()">📋 Copiar Chave PIX</button>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="closeModalPagamento()">Cancelar</button>
+      <button class="btn btn-primary" id="btnConfirmarPag" onclick="confirmarPagamento()" style="background:#22c55e;color:#000">✅ Confirmar Pagamento</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DÉBITO -->
 <div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
   <div class="modal">
@@ -774,11 +948,9 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
 <script>
-// ========== CONFIGURAÇÃO FIREBASE ==========
+// ========== FIREBASE ==========
 const firebaseConfig = {
   apiKey: "AIzaSyC-hSugRsEfKbTqRUqWM1H_NnG82nqg0ww",
   authDomain: "app1dominium-recovery.firebaseapp.com",
@@ -788,182 +960,107 @@ const firebaseConfig = {
   messagingSenderId: "301887683528",
   appId: "1:301887683528:web:c9333efbf08d85bf47defd"
 };
-
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const auth  = firebase.auth();
+const db2   = firebase.firestore();
 
-// ========== SISTEMA DE ATIVAÇÃO ==========
-// ===== AUTH FIREBASE =====
-const auth = firebase.auth();
-const db2 = firebase.firestore();
-
-// Tabs login
-window.switchLoginTab = (tab) => {
-  document.getElementById('formEntrar').style.display = tab==='entrar'?'block':'none';
-  document.getElementById('formAtivar').style.display = tab==='ativar'?'block':'none';
-  document.getElementById('tabEntrar').style.cssText = tab==='entrar'?'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;':'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;';
-  document.getElementById('tabAtivar').style.cssText = tab==='ativar'?'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;':'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;';
-};
-
-// Auth state
-auth.onAuthStateChanged((user) => {
+// ========== HELPERS ==========
+function mostrarApp() {
   document.getElementById('loadingScreen').classList.add('hidden');
-  if(user){
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('active');
-    listar(); atualizarHeaderTotal();
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appContainer').classList.add('active');
+  listar();
+  atualizarHeaderTotal();
+}
+function mostrarLogin(msg) {
+  document.getElementById('loadingScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('appContainer').classList.remove('active');
+  if (msg) {
+    const el = document.getElementById('loginError');
+    if (el) { el.textContent = msg; el.classList.add('show'); }
+  }
+}
+
+// ========== AUTH STATE ==========
+auth.onAuthStateChanged(user => {
+  if (user) {
+    mostrarApp();
   } else {
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('appContainer').classList.remove('active');
+    mostrarLogin();
   }
 });
 
-window.entrar = async () => {
+// ========== TABS LOGIN ==========
+function switchLoginTab(tab) {
+  document.getElementById('formEntrar').style.display = tab==='entrar' ? 'block' : 'none';
+  document.getElementById('formAtivar').style.display = tab==='ativar'  ? 'block' : 'none';
+  const on  = 'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;';
+  const off = 'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;';
+  document.getElementById('tabEntrar').style.cssText = tab==='entrar' ? on : off;
+  document.getElementById('tabAtivar').style.cssText  = tab==='ativar'  ? on : off;
+}
+window.switchLoginTab = switchLoginTab;
+
+// ========== ENTRAR ==========
+async function entrar() {
   const email = document.getElementById('loginEmail').value.trim();
   const senha = document.getElementById('loginSenha').value;
-  const err = document.getElementById('loginError');
-  err.textContent=''; err.classList.remove('show');
-  if(!email||!senha){err.textContent='Preencha e-mail e senha.';err.classList.add('show');return;}
+  const err   = document.getElementById('loginError');
+  err.textContent = ''; err.classList.remove('show');
+  if (!email || !senha) { err.textContent = 'Preencha e-mail e senha.'; err.classList.add('show'); return; }
   try {
     await auth.signInWithEmailAndPassword(email, senha);
   } catch(e) {
-    err.textContent = e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found' ? 'E-mail ou senha incorretos.' : 'Erro ao entrar.';
+    const bad = ['auth/invalid-credential','auth/wrong-password','auth/user-not-found','auth/invalid-email'];
+    err.textContent = bad.includes(e.code) ? 'E-mail ou senha incorretos.' : 'Erro ao entrar. Tente novamente.';
     err.classList.add('show');
   }
-};
+}
+window.entrar = entrar;
 
-window.ativar = async () => {
+// ========== ATIVAR ==========
+async function ativar() {
   const email = document.getElementById('cadEmail').value.trim();
   const senha = document.getElementById('cadSenha').value;
-  const code = document.getElementById('activationCode').value.trim().toUpperCase();
-  const err = document.getElementById('activationError');
-  err.textContent=''; err.classList.remove('show');
-  if(!email||!senha||!code){err.textContent='Preencha todos os campos.';err.classList.add('show');return;}
-  if(senha.length<6){err.textContent='Senha mínima 6 caracteres.';err.classList.add('show');return;}
+  const code  = document.getElementById('activationCode').value.trim().toUpperCase();
+  const err   = document.getElementById('activationError');
+  err.textContent = ''; err.classList.remove('show');
+  if (!email || !senha || !code) { err.textContent = 'Preencha todos os campos.'; err.classList.add('show'); return; }
+  if (senha.length < 6)          { err.textContent = 'Senha mínima 6 caracteres.'; err.classList.add('show'); return; }
   try {
-    const codigoRef = db2.collection('codigos').doc(code);
-    const codigoDoc = await codigoRef.get();
-    if(!codigoDoc.exists){err.textContent='❌ Código não encontrado.';err.classList.add('show');return;}
-    const dados = codigoDoc.data();
-    if(!dados.ativo){err.textContent='❌ Código desativado.';err.classList.add('show');return;}
-    if(dados.usado){err.textContent='❌ Código já utilizado.';err.classList.add('show');return;}
+    const snap = await db2.collection('codigos').doc(code).get();
+    if (!snap.exists)  { err.textContent = '❌ Código não encontrado.';  err.classList.add('show'); return; }
+    const d = snap.data();
+    if (!d.ativo)      { err.textContent = '❌ Código desativado.';      err.classList.add('show'); return; }
+    if (d.usado)       { err.textContent = '❌ Código já utilizado.';    err.classList.add('show'); return; }
     await auth.createUserWithEmailAndPassword(email, senha);
-    await codigoRef.update({usado:true, cliente:email});
+    await db2.collection('codigos').doc(code).update({ usado: true, cliente: email });
     showToast('✅ Conta criada com sucesso!');
   } catch(e) {
-    if(e.code==='auth/email-already-in-use') err.textContent='E-mail já cadastrado. Use "Entrar".';
-    else err.textContent='Erro: '+e.message;
+    err.textContent = e.code === 'auth/email-already-in-use'
+      ? 'E-mail já cadastrado. Use "Entrar".'
+      : 'Erro: ' + e.message;
     err.classList.add('show');
   }
-};
+}
+window.ativar = ativar;
 
-window.sair = async () => {
+// ========== SAIR ==========
+async function sair() {
   await auth.signOut();
   showToast('👋 Até logo!');
-};
-
-const ACTIVATION_KEY = 'app_activated';
-const LICENSE_KEY = 'license_code';
-
-// Verificar se já está ativado
-function checkActivation() {
-  const isActivated = true; // Auth now handled by Firebase
-  
-  if (isActivated === 'true') {
-    showApp();
-  } else {
-    showActivationScreen();
-  }
 }
+window.sair = sair;
 
-function showActivationScreen() {
-  document.getElementById('activationScreen').classList.remove('hidden');
-  document.getElementById('appContainer').classList.remove('active');
-}
 
-function showApp() {
-  document.getElementById('activationScreen').classList.add('hidden');
-  document.getElementById('appContainer').classList.add('active');
-  renderClientes();
-  atualizarHeaderTotal();
-}
+
+
 
 // Formatar código enquanto digita
 document.getElementById('activationCode').addEventListener('input', function(e) {
-  let value = e.target.value.toUpperCase();
-  e.target.value = value;
+  e.target.value = e.target.value.toUpperCase();
 });
-
-// Ativar com Enter
-document.getElementById('activationCode').addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    activateLicense();
-  }
-});
-
-// Função de ativação
-document.getElementById('activateBtn').addEventListener('click', activateLicense);
-
-async function activateLicense() {
-  const code = document.getElementById('activationCode').value.trim().toUpperCase();
-  const errorDiv = document.getElementById('activationError');
-  const btn = document.getElementById('activateBtn');
-  
-  if (code.length < 4) {
-    errorDiv.textContent = 'Digite um código válido';
-    errorDiv.classList.add('show');
-    return;
-  }
-  
-  btn.disabled = true;
-  btn.textContent = 'Validando...';
-  errorDiv.classList.remove('show');
-  
-  try {
-    // Buscar código no Firestore (mesma coleção do app empresas)
-    const db = firebase.firestore();
-    const codigoRef = db.collection('codigos').doc(code);
-    const codigoDoc = await codigoRef.get();
-    
-    if (!codigoDoc.exists) {
-      throw new Error('Código não encontrado');
-    }
-    
-    const dados = codigoDoc.data();
-    
-    if (!dados.ativo) {
-      throw new Error('Código inativo ou desativado');
-    }
-    
-    if (dados.usado) {
-      throw new Error('Código já utilizado');
-    }
-    
-    // Marcar código como usado
-    await codigoRef.update({
-      usado: true,
-      usedAt: new Date().toISOString(),
-    });
-    
-    // Salvar ativação localmente
-    localStorage.setItem(ACTIVATION_KEY, 'true');
-    localStorage.setItem(LICENSE_KEY, code);
-    
-    showToast('✅ Licença ativada com sucesso!');
-    
-    setTimeout(() => {
-      showApp();
-    }, 1000);
-    
-  } catch (error) {
-    console.error('Erro na ativação:', error);
-    errorDiv.textContent = error.message || 'Código inválido. Tente novamente.';
-    errorDiv.classList.add('show');
-    btn.disabled = false;
-    btn.textContent = 'Ativar Licença';
-  }
-}
 
 // ========== RESTO DO CÓDIGO ORIGINAL ==========
 let clientes = JSON.parse(localStorage.getItem('clientes_data')) || [];
@@ -1113,22 +1210,34 @@ function renderClientes() {
     const totalPendente = c.debitos.filter(d => !d.pago).reduce((s, d) => s + d.valor, 0);
     const status = getStatus(c);
     
-    const statusLabels = { pendente: 'PENDENTE', pago: 'PAGO', parcial: 'PARCIAL' };
-    const statusLabel = statusLabels[status];
-    const totalClass = status;
+    const statusLabels = { pendente: 'PENDENTE', pago: 'PAGO', parcial: 'PARCIAL', negociado: 'NEGOCIADO' };
+    const statusLabel = statusLabels[status] || 'PENDENTE';
+    const totalClass = status === 'negociado' ? 'parcial' : status;
     const badgeClass = 'badge-' + status;
 
     const debitosHTML = c.debitos.map((d, di) => {
+      const isNeg = d.negociado && !d.pago;
+      const icon = d.pago ? '✅' : (isNeg ? '🤝' : '💳');
+      const valClass = d.pago ? 'pago' : (isNeg ? '' : 'pendente');
+      const valStyle = isNeg ? 'color:var(--yellow)' : '';
+      const valDisplay = isNeg && d.valorNegociado
+        ? formatarValor(d.valorNegociado) + ' <span style="font-size:11px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valor) + '</span>'
+        : formatarValor(d.valor);
+      const negTag = isNeg ? ' <span style="font-size:9px;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;font-weight:700;vertical-align:middle">NEG</span>' : '';
+      const obsLine = [d.data ? formatarData(d.data) : '', d.obs ? '· '+d.obs : '', d.obsNegociado ? '🤝 '+d.obsNegociado : ''].filter(Boolean).join(' ');
       return `
         <div class="debt-item ${d.pago ? 'pago' : ''}">
-          <div class="debt-icon">${d.pago ? '✅' : '💳'}</div>
+          <div class="debt-icon">${icon}</div>
           <div class="debt-info">
-            <div class="debt-desc">${d.desc}</div>
-            <div class="debt-date">${d.data ? formatarData(d.data) : ''} ${d.obs ? '· ' + d.obs : ''}</div>
+            <div class="debt-desc">${d.desc}${negTag}</div>
+            <div class="debt-date">${obsLine}</div>
           </div>
-          <div class="debt-valor ${d.pago ? 'pago' : 'pendente'}">${formatarValor(d.valor)}</div>
+          <div class="debt-valor ${valClass}" style="${valStyle}">${valDisplay}</div>
           <div class="debt-actions">
-            ${!d.pago ? `<button class="btn btn-secondary btn-small" onclick="pagarDebito(${realIdx},${di})">✓</button>` : ''}
+            ${d.pago
+              ? `<button class="btn btn-small" style="background:#052e16;color:#22c55e;border:1px solid #166534;font-size:10px;font-weight:700;padding:5px 9px;" onclick="desmarcarPago(${realIdx},${di})" title="Clique para desmarcar">✅ PAGO</button>`
+              : `<button class="btn btn-small" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-size:10px;font-weight:700;padding:5px 9px;" onclick="abrirModalPagamento(${realIdx},${di})" title="Marcar como pago">○ PAGO</button>`
+            }
             <button class="btn btn-danger btn-small" onclick="deletarDebito(${realIdx},${di})">🗑</button>
           </div>
         </div>
@@ -1141,7 +1250,14 @@ function renderClientes() {
           <div class="client-avatar">${initial}</div>
           <div class="client-info">
             <div class="client-name">${c.nome}</div>
-            <div class="client-phone">📞 ${c.telefone}</div>
+            <div class="client-phone" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span>📞 ${c.telefone}</span>
+              <a href="tel:${c.telefone.replace(/\D/g,'')}" onclick="event.stopPropagation()" 
+                 style="display:inline-flex;align-items:center;gap:4px;background:#1a2e1a;color:#22c55e;border:1px solid #166534;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;"
+                 title="Ligar agora">
+                📲 Ligar
+              </a>
+            </div>
           </div>
           <div class="client-summary">
             <div class="client-total ${totalClass}">${formatarValor(totalPendente)}</div>
@@ -1153,8 +1269,12 @@ function renderClientes() {
           <div class="debt-list">${debitosHTML}</div>
           <div class="action-row">
             <button class="btn btn-secondary btn-small" onclick="abrirModal(${realIdx})">➕ Débito</button>
+            <a href="tel:${c.telefone.replace(/\D/g,'')}" class="btn btn-small" 
+               style="background:#1a2e1a;color:#22c55e;border:1px solid #166534;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+              📲 Ligar
+            </a>
             <button class="btn btn-secondary btn-small" onclick="cobrar(${realIdx})">💬 Cobrar</button>
-            <button class="btn btn-secondary btn-small" onclick="enviarPix(${realIdx})">💳 Enviar PIX</button>
+            <button class="btn btn-secondary btn-small" onclick="enviarPix(${realIdx})">💳 PIX</button>
             <button class="btn btn-secondary btn-small" onclick="editarCliente(${realIdx})">✏️ Editar</button>
             <button class="btn btn-danger btn-small" onclick="deletarCliente(${realIdx})">🗑 Excluir</button>
           </div>
@@ -1175,8 +1295,10 @@ function getStatus(c) {
   if (!c.debitos || c.debitos.length === 0) return 'pago';
   const todos = c.debitos.length;
   const pagos = c.debitos.filter(d => d.pago).length;
-  if (pagos === 0) return 'pendente';
+  const negociados = c.debitos.filter(d => d.negociado && !d.pago).length;
   if (pagos === todos) return 'pago';
+  if (pagos === 0 && negociados === 0) return 'pendente';
+  if (pagos === 0 && negociados > 0) return 'negociado';
   return 'parcial';
 }
 
@@ -1219,11 +1341,176 @@ function adicionarDebito() {
   showToast('💳 Débito adicionado!');
 }
 
-function pagarDebito(cidx, didx) {
-  clientes[cidx].debitos[didx].pago = true;
+// -------- MODAL PAGAMENTO --------
+let pagMetodoSelecionado = null;
+
+function abrirModalPagamento(cidx, didx) {
+  const d = clientes[cidx].debitos[didx];
+  document.getElementById('pagCidx').value = cidx;
+  document.getElementById('pagDidx').value = didx;
+  document.getElementById('pagDebtDesc').textContent = d.desc;
+  document.getElementById('pagDebtValor').textContent = formatarValor(d.valorNegociado || d.valor);
+  document.getElementById('pagValorNegociado').value = d.valorNegociado || '';
+  document.getElementById('pagObsNegociado').value = d.obsNegociado || '';
+  pagMetodoSelecionado = null;
+
+  // Importante: só pré-marca negociar se JÁ estava negociado antes
+  // Nunca pré-marcar automaticamente ao abrir (evita marcar como pago por engano)
+  const jaNegociado = d.negociado && !d.pago;
+  document.getElementById('negociarCheck').checked = jaNegociado;
+  document.getElementById('negociarFields').classList.toggle('show', jaNegociado);
+
+  document.getElementById('pixInfoBox').style.display = 'none';
+  document.querySelectorAll('.pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
+  document.getElementById('resumoNegociacao').style.display = jaNegociado ? 'block' : 'none';
+  if (jaNegociado && d.valorNegociado) atualizarResumoPag();
+
+  // Atualiza label do botão confirmar
+  atualizarBtnConfirmar();
+  document.getElementById('modalPagamentoOverlay').classList.add('open');
+}
+
+function atualizarBtnConfirmar() {
+  const negociar = document.getElementById('negociarCheck').checked;
+  const btn = document.getElementById('btnConfirmarPag');
+  if (!btn) return;
+  if (negociar && !pagMetodoSelecionado) {
+    btn.textContent = '🤝 Salvar Negociação';
+    btn.style.background = '#1e3a5f';
+    btn.style.color = '#60a5fa';
+  } else {
+    btn.textContent = '✅ Confirmar Pagamento';
+    btn.style.background = '#22c55e';
+    btn.style.color = '#000';
+  }
+}
+
+function fecharModalPagamento(e) {
+  if (e.target === document.getElementById('modalPagamentoOverlay')) closeModalPagamento();
+}
+
+function closeModalPagamento() {
+  document.getElementById('modalPagamentoOverlay').classList.remove('open');
+}
+
+function toggleNegociar() {
+  const checked = document.getElementById('negociarCheck').checked;
+  document.getElementById('negociarFields').classList.toggle('show', checked);
+  if (!checked) {
+    document.getElementById('resumoNegociacao').style.display = 'none';
+    // Deselecionar método de pagamento ao marcar negociação
+    pagMetodoSelecionado = null;
+    document.getElementById('pixInfoBox').style.display = 'none';
+    document.querySelectorAll('.pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
+  }
+  atualizarBtnConfirmar();
+}
+
+function atualizarResumoPag() {
+  const cidx = parseInt(document.getElementById('pagCidx').value);
+  const didx = parseInt(document.getElementById('pagDidx').value);
+  if (isNaN(cidx) || isNaN(didx)) return;
+  const d = clientes[cidx].debitos[didx];
+  const valNeg = parseFloat(document.getElementById('pagValorNegociado').value);
+  const box = document.getElementById('resumoNegociacao');
+  if (valNeg > 0 && d) {
+    const desc = d.valor - valNeg;
+    const pct = ((desc / d.valor) * 100).toFixed(1);
+    box.style.display = 'block';
+    box.innerHTML = `💡 Original: <strong>${formatarValor(d.valor)}</strong> → Negociado: <strong>${formatarValor(valNeg)}</strong> (−${pct}%)`;
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+function selecionarPagamento(metodo) {
+  pagMetodoSelecionado = metodo;
+  document.querySelectorAll('.pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
+  document.getElementById('pay' + metodo.charAt(0).toUpperCase() + metodo.slice(1)).classList.add('selected');
+  atualizarBtnConfirmar();
+  if (metodo === 'pix') {
+    const cfg = getConfig();
+    const box = document.getElementById('pixInfoBox');
+    const content = document.getElementById('pixInfoContent');
+    box.style.display = 'block';
+    if (cfg.pixChave) {
+      content.innerHTML = `Tipo: <strong>${cfg.pixTipo||'—'}</strong><br>Chave: <strong>${cfg.pixChave}</strong><br>Favorecido: <strong>${cfg.pixNome||cfg.empresa||'—'}</strong>`;
+    } else {
+      content.innerHTML = `<span style="color:var(--red)">⚠️ Chave PIX não configurada. Vá em ⚙️ Config para adicionar.</span>`;
+    }
+  } else {
+    document.getElementById('pixInfoBox').style.display = 'none';
+  }
+}
+
+function copiarChavePix() {
+  const cfg = getConfig();
+  if (cfg.pixChave) {
+    navigator.clipboard.writeText(cfg.pixChave)
+      .then(() => showToast('📋 Chave PIX copiada!'))
+      .catch(() => showToast('❌ Não foi possível copiar'));
+  }
+}
+
+function confirmarPagamento() {
+  const cidx = parseInt(document.getElementById('pagCidx').value);
+  const didx = parseInt(document.getElementById('pagDidx').value);
+  const negociar = document.getElementById('negociarCheck').checked;
+  const valNeg = parseFloat(document.getElementById('pagValorNegociado').value);
+  const obsNeg = document.getElementById('pagObsNegociado').value.trim();
+  const d = clientes[cidx].debitos[didx];
+
+  // MODO NEGOCIAÇÃO: sem método de pagamento selecionado → salva só a negociação
+  if (negociar && !pagMetodoSelecionado) {
+    if (!valNeg || valNeg <= 0) { showToast('⚠️ Informe o valor negociado!'); return; }
+    d.negociado = true;
+    d.valorNegociado = valNeg;
+    d.obsNegociado = obsNeg;
+    d.pago = false; // garante que não marca como pago
+    salvarStorage();
+    renderClientes();
+    closeModalPagamento();
+    showToast('🤝 Negociação registrada!');
+    return;
+  }
+
+  // MODO PAGAMENTO: exige método selecionado
+  if (!pagMetodoSelecionado) { showToast('⚠️ Selecione a forma de pagamento!'); return; }
+
+  // Se negociou + escolheu método → salva tudo e marca como pago
+  if (negociar && valNeg > 0) {
+    d.negociado = true;
+    d.valorNegociado = valNeg;
+    d.obsNegociado = obsNeg;
+    d.valor = valNeg; // atualiza o valor principal
+  }
+
+  d.pago = true;
+  d.negociado = d.negociado || false;
+  d.formaPagamento = pagMetodoSelecionado;
+  d.dataPagamento = new Date().toISOString().split('T')[0];
+
   salvarStorage();
   renderClientes();
-  showToast('✅ Débito marcado como pago!');
+  closeModalPagamento();
+  const label = { pix: 'PIX ⚡', dinheiro: 'Dinheiro 💵', cartao: 'Cartão 💳' };
+  showToast(\`✅ Pago via \${label[pagMetodoSelecionado] || pagMetodoSelecionado}!\`);
+}
+
+// Desmarcar como pago (toggle)
+function desmarcarPago(cidx, didx) {
+  const d = clientes[cidx].debitos[didx];
+  if (!confirm('Desmarcar este débito como pago?')) return;
+  d.pago = false;
+  d.formaPagamento = null;
+  d.dataPagamento = null;
+  salvarStorage();
+  renderClientes();
+  showToast('↩️ Débito reaberto!');
+}
+
+function pagarDebito(cidx, didx) {
+  abrirModalPagamento(cidx, didx);
 }
 
 function deletarDebito(cidx, didx) {
@@ -1348,10 +1635,11 @@ function enviarPix(idx) {
 
 // RESUMO
 function renderResumo() {
-  let totalPend = 0, totalPago = 0, debitosAbertos = 0;
+  let totalPend = 0, totalPago = 0, totalNeg = 0, debitosAbertos = 0;
   clientes.forEach(c => {
     c.debitos.forEach(d => {
-      if (d.pago) totalPago += d.valor;
+      if (d.pago) totalPago += d.valorNegociado || d.valor;
+      else if (d.negociado) { totalNeg += d.valorNegociado || d.valor; debitosAbertos++; }
       else { totalPend += d.valor; debitosAbertos++; }
     });
   });
@@ -1360,6 +1648,8 @@ function renderResumo() {
   document.getElementById('sumPago').textContent = formatarValor(totalPago);
   document.getElementById('sumClientes').textContent = clientes.length;
   document.getElementById('sumDebitos').textContent = debitosAbertos;
+  const negEl = document.getElementById('sumNegociado');
+  if (negEl) negEl.textContent = formatarValor(totalNeg);
 
   const hoje = new Date();
   const em7 = new Date(); em7.setDate(hoje.getDate() + 7);
@@ -1386,7 +1676,9 @@ function renderResumo() {
 
 function atualizarHeaderTotal() {
   let total = 0;
-  clientes.forEach(c => c.debitos.forEach(d => { if (!d.pago) total += d.valor; }));
+  clientes.forEach(c => c.debitos.forEach(d => {
+    if (!d.pago) total += d.valorNegociado || d.valor;
+  }));
   document.getElementById('headerTotal').textContent = formatarValor(total);
 }
 
@@ -1473,8 +1765,22 @@ function buscarContato() {
   });
 }
 
-// INIT
-checkActivation();
+// LISTAR (stub - renderiza clientes ao carregar)
+function listar() {
+  renderClientes();
+  renderResumo();
+}
+
+// Firebase onAuthStateChanged acima cuida do estado de login
+
+// FALLBACK: Se Firebase não responder em 3 segundos, mostra login
+setTimeout(() => {
+  const loading = document.getElementById('loadingScreen');
+  if(loading && !loading.classList.contains('hidden')) {
+    console.warn('⚠️ Firebase timeout - mostrando login');
+    mostrarLogin('Firebase não carregou. Use Live Server ou hospede online.');
+  }
+}, 3000);
 </script>
 </body>
 </html>
