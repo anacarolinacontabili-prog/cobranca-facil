@@ -384,6 +384,32 @@
         </div>
       </div>
       <div class="form-card">
+  <div class="form-title">🔗 Link de Pagamento</div>
+  <div class="form-group">
+    <label>Seu Link de Pagamento</label>
+    <input type="url" id="configLinkPagamento" placeholder="Ex: mercadopago.com.br/seu-usuario">
+  </div>
+  <div style="background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:12px;font-size:12px;line-height:2;">
+    <strong style="color:var(--muted)">EXEMPLOS:</strong><br>
+    🟢 mercadopago.com.br/seu-usuario<br>
+    💚 picpay.com/seu-usuario<br>
+    🔵 nubank.com.br/cobrar/seu-link<br>
+    🟣 inter.co/seu-link
+  </div>
+  <div class="form-group">
+    <label>Mensagem com Link</label>
+    <textarea id="configMensagemLink" rows="8" placeholder="Use: {nome}, {total}, {link}, {empresa}, {atendente}"></textarea>
+  </div>
+  <div style="background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:12px;font-size:12px;line-height:1.8;">
+    <strong style="color:var(--muted)">VARIÁVEIS:</strong><br>
+    <strong>{link}</strong> = Seu link de pagamento<br>
+    <strong>{nome}</strong> = Nome do cliente<br>
+    <strong>{total}</strong> = Valor total<br>
+    <strong>{empresa}</strong> = Nome da empresa<br>
+    <strong>{atendente}</strong> = Seu nome
+  </div>
+</div>
+      <div class="form-card">
         <div class="form-title">⚡ Mensagem PIX</div>
         <div class="form-group">
           <textarea id="configMensagemPix" rows="10" placeholder="Use: {nome}, {empresa}, {atendente}, {total}, {pix_tipo}, {pix_chave}, {pix_nome}"></textarea>
@@ -453,14 +479,12 @@
     <div class="form-group">
       <label>Forma de Pagamento</label>
       <div class="pay-method-grid" style="margin:8px 0 0">
-        <button class="pay-method-btn disabled">
-          <span class="pay-icon">💵</span>Dinheiro
-          <span class="pay-badge-soon">EM BREVE</span>
-        </button>
-        <button class="pay-method-btn disabled">
-          <span class="pay-icon">💳</span>Cartão
-          <span class="pay-badge-soon">EM BREVE</span>
-        </button>
+        <button class="pay-method-btn" id="parPayDinheiro" onclick="selecionarMetodoParcial('dinheiro')">
+  <span class="pay-icon">💵</span>Dinheiro
+</button>
+<button class="pay-method-btn" id="parPayLink" onclick="selecionarMetodoParcial('link')">
+  <span class="pay-icon">🔗</span>Link
+</button>
         <button class="pay-method-btn" id="parPayPix" onclick="selecionarMetodoParcial('pix')">
           <span class="pay-icon">⚡</span>PIX
         </button>
@@ -507,17 +531,15 @@
     </div>
     <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Forma de Pagamento</div>
     <div class="pay-method-grid">
-      <button class="pay-method-btn disabled">
-        <span class="pay-icon">💵</span>Dinheiro
-        <span class="pay-badge-soon">EM BREVE</span>
-      </button>
-      <button class="pay-method-btn disabled">
-        <span class="pay-icon">💳</span>Cartão
-        <span class="pay-badge-soon">EM BREVE</span>
-      </button>
-      <button class="pay-method-btn" id="payPix" onclick="selecionarPagamento('pix')">
-        <span class="pay-icon">⚡</span>PIX
-      </button>
+  <button class="pay-method-btn" id="payDinheiro" onclick="selecionarPagamento('dinheiro')">
+    <span class="pay-icon">💵</span>Dinheiro
+  </button>
+  <button class="pay-method-btn" id="payLink" onclick="selecionarPagamento('link')">
+    <span class="pay-icon">🔗</span>Link
+  </button>
+  <button class="pay-method-btn" id="payPix" onclick="selecionarPagamento('pix')">
+    <span class="pay-icon">⚡</span>PIX
+  </button>
     </div>
     <div class="pix-info-box" id="pixInfoBox">
       <div class="pix-label">⚡ DADOS PIX</div>
@@ -774,7 +796,9 @@ function salvarConfig() {
     pixTipo:     document.getElementById('configPixTipo').value,
     pixChave:    document.getElementById('configPixChave').value,
     pixNome:     document.getElementById('configPixNome').value,
-    mensagemPix: document.getElementById('configMensagemPix').value
+    mensagemPix:   document.getElementById('configMensagemPix').value,
+    linkPagamento: document.getElementById('configLinkPagamento').value,
+    mensagemLink:  document.getElementById('configMensagemLink').value
   };
   localStorage.setItem('app_config', JSON.stringify(cfg));
   showToast('⚙️ Configurações salvas!');
@@ -790,6 +814,8 @@ function carregarConfig() {
   document.getElementById('configPixChave').value    = cfg.pixChave || '';
   document.getElementById('configPixNome').value     = cfg.pixNome || '';
   document.getElementById('configMensagemPix').value = cfg.mensagemPix || MSG_PIX_PADRAO;
+  document.getElementById('configLinkPagamento').value = cfg.linkPagamento || '';
+  document.getElementById('configMensagemLink').value  = cfg.mensagemLink  || MSG_LINK_PADRAO;
 }
 
 function salvarStorage() {
@@ -924,10 +950,10 @@ function renderClientes() {
               style="background:#1a2e1a;color:#22c55e;border:1px solid #166534;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
               📲 Ligar
             </a>
-            <button class="btn btn-secondary btn-small" onclick="cobrar(${realIdx})">💬 Cobrar</button>
             <button class="btn btn-secondary btn-small" onclick="enviarPix(${realIdx})">⚡ PIX</button>
+            <button class="btn btn-secondary btn-small" onclick="enviarLink(${realIdx})">🔗 Link</button>
+            <button class="btn btn-secondary btn-small" onclick="registrarDinheiro(${realIdx})">💵 Dinheiro</button>
             <button class="btn btn-secondary btn-small" onclick="abrirEditar(${realIdx})">✏️ Editar</button>
-            <button class="btn btn-danger btn-small" onclick="deletarCliente(${realIdx})">🗑 Excluir</button>
           </div>
         </div>
       </div>`;
@@ -1167,7 +1193,9 @@ function atualizarResumoPag() {
 function selecionarPagamento(metodo) {
   pagMetodoSelecionado = metodo;
   document.querySelectorAll('#modalPagamentoOverlay .pay-method-btn:not(.disabled)').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('payPix').classList.add('selected');
+  if (metodo === 'pix')      document.getElementById('payPix').classList.add('selected');
+  if (metodo === 'dinheiro') document.getElementById('payDinheiro').classList.add('selected');
+  if (metodo === 'link')     document.getElementById('payLink').classList.add('selected');
   atualizarBtnConfirmar();
   const cfg     = getConfig();
   const box     = document.getElementById('pixInfoBox');
@@ -1657,7 +1685,72 @@ function buscarContato() {
     showToast(err.message.includes('denied') ? '❌ Permissão negada.' : '❌ Erro ao buscar contato.');
   });
 }
+const MSG_LINK_PADRAO = `Olá, {nome}! 👋
 
+Identificamos um débito em aberto:
+💰 *Total: {total}*
+
+Pague agora clicando no link abaixo:
+👉 {link}
+
+Aceitamos cartão, PIX e mais!
+
+Qualquer dúvida estou à disposição!
+{atendente}
+{empresa}`;
+
+function enviarLink(idx) {
+  const c   = clientes[idx];
+  const cfg = getConfig();
+  if (!cfg.linkPagamento) {
+    if (confirm('Link de pagamento não configurado!\nConfigurar agora?')) {
+      showTab('config', document.querySelectorAll('.tab')[4]);
+      setTimeout(()=>document.getElementById('configLinkPagamento').focus(), 300);
+    }
+    return;
+  }
+  const pendentes = c.debitos.filter(d=>!d.pago);
+  const total     = pendentes.reduce((s,d)=>s+d.valor,0);
+  const msg = (cfg.mensagemLink || MSG_LINK_PADRAO)
+    .replace(/{nome}/g,      c.nome.split(' ')[0])
+    .replace(/{empresa}/g,   cfg.empresa   || '[Empresa]')
+    .replace(/{atendente}/g, cfg.atendente || '[Atendente]')
+    .replace(/{total}/g,     formatarValor(total))
+    .replace(/{link}/g,      cfg.linkPagamento);
+  document.getElementById('cobrarMsgPreview').value = msg;
+  document.getElementById('cobrarTelefone').value   = c.telefone.replace(/\D/g,'');
+  document.getElementById('modalCobrarOverlay').classList.add('open');
+}
+
+function registrarDinheiro(idx) {
+  const c         = clientes[idx];
+  const pendentes = c.debitos.filter(d=>!d.pago);
+  if (pendentes.length === 0) {
+    showToast('✅ Cliente sem débitos pendentes!');
+    return;
+  }
+  if (pendentes.length === 1) {
+    const cidx = clientes.indexOf(c);
+    const didx = c.debitos.indexOf(pendentes[0]);
+    abrirModalPagamento(cidx, didx);
+    setTimeout(()=>selecionarPagamento('dinheiro'), 300);
+    return;
+  }
+  const opcoes = pendentes.map((d,i) =>
+    `${i+1}. ${d.desc} - ${formatarValor(d.valor)}`
+  ).join('\n');
+  const escolha = prompt(`Qual débito foi pago em dinheiro?\n\n${opcoes}\n\nDigite o número:`);
+  if (!escolha) return;
+  const idx2 = parseInt(escolha) - 1;
+  if (isNaN(idx2) || idx2 < 0 || idx2 >= pendentes.length) {
+    showToast('⚠️ Opção inválida!');
+    return;
+  }
+  const cidx = clientes.indexOf(c);
+  const didx = c.debitos.indexOf(pendentes[idx2]);
+  abrirModalPagamento(cidx, didx);
+  setTimeout(()=>selecionarPagamento('dinheiro'), 300);
+}
 function listar() {
   renderClientes();
   renderResumo();
