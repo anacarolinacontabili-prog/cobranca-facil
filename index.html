@@ -1812,9 +1812,10 @@ function listar() {
 setTimeout(() => {
   const loading = document.getElementById('loadingScreen');
   if (loading && !loading.classList.contains('hidden')) {
-    mostrarLogin('Erro de conexão. Tente novamente.');
+    document.getElementById('loadingScreen').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
   }
-}, 5000);
+}, 8000);
 </script>
 </body>
 </html>
