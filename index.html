@@ -47,8 +47,8 @@
   .header-stats { margin-left: auto; text-align: right; }
   .header-stats .total { font-size: 18px; font-weight: 700; color: var(--green); font-family: 'DM Mono', monospace; }
   .header-stats .label { font-size: 10px; color: var(--muted); }
-  .tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 76px; z-index: 99; }
-  .tab { flex: 1; padding: 14px; text-align: center; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 76px; z-index: 99; overflow-x: auto; }
+  .tab { flex: 1; padding: 12px 6px; text-align: center; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; min-width: 55px; }
   .tab.active { color: var(--green); border-bottom-color: var(--green); }
   .content { padding: 20px; }
   .section { display: none; }
@@ -91,7 +91,7 @@
   .pay-method-btn:hover:not(.disabled) { border-color: var(--accent); color: var(--accent); background: var(--green-dim); }
   .pay-method-btn.selected { border-color: #22c55e; color: #22c55e; background: #052e16; }
   .pay-method-btn.disabled { opacity: 0.35; cursor: not-allowed; }
-  .pay-badge-soon { position: absolute; top: -8px; right: -6px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 8px; padding: 2px 5px; border-radius: 8px; font-weight: 700; letter-spacing: 0.3px; }
+  .pay-badge-soon { position: absolute; top: -8px; right: -6px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 8px; padding: 2px 5px; border-radius: 8px; font-weight: 700; }
   .negociar-section { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin: 12px 0; }
   .negociar-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #60a5fa; cursor: pointer; user-select: none; }
   .negociar-toggle input[type=checkbox] { width: auto; accent-color: #60a5fa; }
@@ -118,7 +118,7 @@
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; padding: 24px; max-height: 90vh; overflow-y: auto; }
-  .modal-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--green); }
+  .modal-header { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 20px; }
   .modal-buttons { display: flex; gap: 10px; margin-top: 16px; }
   .modal-buttons .btn { flex: 1; }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
@@ -127,7 +127,7 @@
   .stat-value.red { color: var(--red); }
   .stat-value.green { color: var(--green); }
   .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .alert-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .alert-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
   .alert-title { font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
   .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--surface); color: var(--text); padding: 12px 20px; border-radius: 30px; border: 1px solid var(--border); font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 2000; }
   .toast.show { opacity: 1; }
@@ -140,9 +140,7 @@
   .audio-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .btn-record { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-record.iniciar { background: #7f1d1d; color: #fca5a5; }
-  .btn-record.iniciar:hover { background: #991b1b; }
   .btn-record.parar { background: #052e16; color: #86efac; }
-  .btn-record.parar:hover { background: #14532d; }
   @keyframes pulseRec { 0%,100%{opacity:1} 50%{opacity:0.5} }
   .gravando { animation: pulseRec 1s infinite; }
   audio { width: 100%; margin-top: 10px; border-radius: 8px; }
@@ -154,6 +152,12 @@
   .historico-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--surface2); border-radius: 8px; margin-bottom: 6px; font-size: 13px; border: 1px solid var(--border); }
   .historico-data { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; }
   .historico-val { color: #22c55e; font-weight: 700; font-family: 'DM Mono', monospace; }
+  .hist-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .hist-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .hist-card-nome { font-size: 14px; font-weight: 700; }
+  .hist-card-data { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .hist-card-desc { font-size: 12px; color: var(--muted); }
+  .hist-card-valor { font-size: 15px; font-weight: 700; font-family: 'DM Mono', monospace; }
 </style>
 </head>
 <body>
@@ -164,9 +168,9 @@
   <div class="activation-subtitle" style="margin-top:16px">Carregando...</div>
 </div>
 
-<!-- TELA DE LOGIN -->
+<!-- LOGIN -->
 <div class="activation-screen" id="loginScreen">
-  <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo Dominium Recovery" class="activation-logo">
+  <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo" class="activation-logo">
   <div class="activation-title">Cobrança Fácil</div>
   <div class="activation-subtitle" style="color:#c9a84c;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Dominium Recovery</div>
   <div class="activation-card">
@@ -174,7 +178,6 @@
       <div id="tabEntrar" onclick="switchLoginTab('entrar')" style="flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;">Entrar</div>
       <div id="tabAtivar" onclick="switchLoginTab('ativar')" style="flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;">Ativar</div>
     </div>
-    <!-- ENTRAR -->
     <div id="formEntrar">
       <div style="margin-bottom:14px">
         <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">E-mail</div>
@@ -187,7 +190,6 @@
       <button class="activation-btn" id="btnEntrar" onclick="entrar()">🔐 Entrar</button>
       <div class="activation-error" id="loginError"></div>
     </div>
-    <!-- ATIVAR -->
     <div id="formAtivar" style="display:none">
       <div style="margin-bottom:14px">
         <div style="font-size:10px;color:#5a5a5a;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">E-mail</div>
@@ -208,7 +210,7 @@
   </div>
 </div>
 
-<!-- APP PRINCIPAL -->
+<!-- APP -->
 <div class="app-container" id="appContainer">
   <div class="header">
     <img src="https://anacarolinacontabili-prog.github.io/cobranca-facil/icon.png" alt="Logo" class="header-logo">
@@ -223,13 +225,15 @@
     <button onclick="sair()" style="background:none;border:1px solid #242424;color:#5a5a5a;font-size:11px;padding:6px 12px;cursor:pointer;font-family:inherit;margin-left:8px;border-radius:4px;">Sair</button>
   </div>
   <div class="tabs">
-    <div class="tab active" onclick="showTab('novo')">➕ Novo</div>
-    <div class="tab" onclick="showTab('clientes')">👥 Clientes</div>
-    <div class="tab" onclick="showTab('resumo')">📊 Resumo</div>
-    <div class="tab" onclick="showTab('config')">⚙️ Config</div>
+    <div class="tab active" onclick="showTab('novo',this)">➕ Novo</div>
+    <div class="tab" onclick="showTab('clientes',this)">👥 Clientes</div>
+    <div class="tab" onclick="showTab('resumo',this)">📊 Resumo</div>
+    <div class="tab" onclick="showTab('historico',this)">📋 Histórico</div>
+    <div class="tab" onclick="showTab('config',this)">⚙️ Config</div>
   </div>
   <div class="content">
-    <!-- NOVO CLIENTE -->
+
+    <!-- NOVO -->
     <div class="section active" id="sec-novo">
       <div class="form-card">
         <div class="form-title">📝 Cadastrar Cliente</div>
@@ -243,7 +247,7 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
           <button class="btn btn-secondary" onclick="buscarContato()">📱 Buscar Contato</button>
-          <button class="btn btn-secondary" onclick="cadastrarPorVoz()">🎤 Cadastrar por Voz</button>
+          <button class="btn btn-secondary" onclick="cadastrarPorVoz()">🎤 Por Voz</button>
         </div>
       </div>
       <div class="form-card">
@@ -285,7 +289,7 @@
           <option value="valor">Maior Valor</option>
           <option value="recente">Mais Recente</option>
         </select>
-        <input type="text" class="filter-search" id="filterSearch" placeholder="🔍 Buscar cliente..." oninput="renderClientes()">
+        <input type="text" class="filter-search" id="filterSearch" placeholder="🔍 Buscar..." oninput="renderClientes()">
       </div>
       <div id="clientesList"></div>
     </div>
@@ -296,7 +300,7 @@
         <div class="stat-card">
           <div class="stat-value red" id="sumPendente">R$ 0,00</div>
           <div class="stat-label">Pendente</div>
-        </div>
+                </div>
         <div class="stat-card">
           <div class="stat-value green" id="sumPago">R$ 0,00</div>
           <div class="stat-label">Recebido</div>
@@ -310,7 +314,7 @@
           <div class="stat-label">Clientes</div>
         </div>
         <div class="stat-card" style="grid-column:span 2">
-          <div class="stat-value"          id="sumDebitos">0</div>
+          <div class="stat-value" id="sumDebitos">0</div>
           <div class="stat-label">Débitos Abertos</div>
         </div>
       </div>
@@ -320,7 +324,17 @@
       </div>
     </div>
 
-    <!-- CONFIGURAÇÕES -->
+    <!-- HISTÓRICO -->
+    <div class="section" id="sec-historico">
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button id="btnHistCobranca" onclick="switchHistorico('cobranca')" class="btn btn-primary" style="flex:1;font-size:12px;">📤 Cobranças</button>
+        <button id="btnHistPagamento" onclick="switchHistorico('pagamento')" class="btn btn-secondary" style="flex:1;font-size:12px;">💰 Pagamentos</button>
+      </div>
+      <div id="histCobrancaList"></div>
+      <div id="histPagamentoList" style="display:none"></div>
+    </div>
+
+    <!-- CONFIG -->
     <div class="section" id="sec-config">
       <div class="form-card">
         <div class="form-title">🏢 Dados da Empresa</div>
@@ -333,16 +347,16 @@
           <input type="text" id="configAtendente" placeholder="Ex: Maria Silva">
         </div>
         <div class="form-group">
-          <label>Cargo/Função (opcional)</label>
+          <label>Cargo/Função</label>
           <input type="text" id="configCargo" placeholder="Ex: Gerente de Cobranças">
         </div>
       </div>
       <div class="form-card">
-        <div class="form-title">💳 Dados para Pagamento PIX</div>
+        <div class="form-title">💳 Dados PIX</div>
         <div class="form-group">
           <label>Tipo de Chave PIX</label>
           <select id="configPixTipo">
-            <option value="">Selecione o tipo</option>
+            <option value="">Selecione</option>
             <option value="CPF">CPF</option>
             <option value="CNPJ">CNPJ</option>
             <option value="E-mail">E-mail</option>
@@ -362,34 +376,21 @@
       <div class="form-card">
         <div class="form-title">💬 Mensagem de Cobrança</div>
         <div class="form-group">
-          <label>Modelo de Mensagem</label>
-          <textarea id="configMensagem" rows="12" placeholder="Use as variáveis: {nome}, {empresa}, {atendente}, {cargo}, {total}, {debitos}"></textarea>
+          <textarea id="configMensagem" rows="10" placeholder="Use: {nome}, {empresa}, {atendente}, {cargo}, {total}, {debitos}"></textarea>
         </div>
-        <div style="background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;">VARIÁVEIS DISPONÍVEIS:</div>
-          <div style="font-size:12px;color:var(--text);line-height:1.6;">
-            <strong>{nome}</strong> = Nome do cliente<br>
-            <strong>{empresa}</strong> = Nome da empresa<br>
-            <strong>{atendente}</strong> = Nome do atendente<br>
-            <strong>{cargo}</strong> = Cargo/Função<br>
-            <strong>{total}</strong> = Valor total dos débitos<br>
-            <strong>{debitos}</strong> = Lista de débitos pendentes
-          </div>
+        <div style="background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:12px;font-size:12px;line-height:1.8;">
+          <strong style="color:var(--muted)">VARIÁVEIS:</strong><br>
+          {nome} {empresa} {atendente} {cargo} {total} {debitos}
         </div>
       </div>
       <div class="form-card">
-        <div class="form-title">💳 Mensagem de Pagamento PIX</div>
+        <div class="form-title">⚡ Mensagem PIX</div>
         <div class="form-group">
-          <label>Modelo de Mensagem PIX</label>
-          <textarea id="configMensagemPix" rows="10" placeholder="Use as variáveis: {nome}, {empresa}, {atendente}, {total}, {pix_tipo}, {pix_chave}, {pix_nome}"></textarea>
+          <textarea id="configMensagemPix" rows="10" placeholder="Use: {nome}, {empresa}, {atendente}, {total}, {pix_tipo}, {pix_chave}, {pix_nome}"></textarea>
         </div>
-        <div style="background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;">VARIÁVEIS PIX:</div>
-          <div style="font-size:12px;color:var(--text);line-height:1.6;">
-            <strong>{pix_tipo}</strong> = Tipo da chave<br>
-            <strong>{pix_chave}</strong> = Chave PIX<br>
-            <strong>{pix_nome}</strong> = Nome do favorecido
-          </div>
+        <div style="background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:12px;font-size:12px;line-height:1.8;">
+          <strong style="color:var(--muted)">VARIÁVEIS PIX:</strong><br>
+          {pix_tipo} {pix_chave} {pix_nome}
         </div>
         <button class="btn btn-primary" onclick="salvarConfig()">💾 Salvar Configurações</button>
       </div>
@@ -403,13 +404,13 @@
     <div class="modal-header">🤝 Registrar Negociação</div>
     <input type="hidden" id="negCidx">
     <input type="hidden" id="negDidx">
-    <div id="negDebtInfo" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px;">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px;">
       <div style="font-size:11px;color:var(--muted);margin-bottom:4px">DÉBITO</div>
       <div id="negDebtDesc" style="font-size:15px;font-weight:700;"></div>
       <div id="negDebtValor" style="font-size:18px;font-weight:800;color:var(--red);font-family:'DM Mono',monospace;margin-top:2px;"></div>
     </div>
     <div class="form-group">
-      <label>Observação da Negociação</label>
+      <label>Observação</label>
       <textarea id="negObs" rows="3" placeholder="Descreva o acordo..."></textarea>
     </div>
     <div class="audio-recorder">
@@ -423,12 +424,12 @@
     </div>
     <div class="modal-buttons">
       <button class="btn btn-secondary" onclick="document.getElementById('modalNegociadoOverlay').classList.remove('open')">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarNegociacao()" style="background:#1e3a5f;color:#60a5fa;">🤝 Salvar Negociação</button>
+      <button class="btn btn-primary" onclick="salvarNegociacao()" style="background:#1e3a5f;color:#60a5fa;">🤝 Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL PAGAMENTO PARCIAL -->
+<!-- MODAL PARCIAL -->
 <div class="modal-overlay" id="modalParcialOverlay" onclick="fecharOverlay(event,'modalParcialOverlay')">
   <div class="modal">
     <div class="modal-header">🟠 Pagamento Parcial</div>
@@ -452,11 +453,11 @@
     <div class="form-group">
       <label>Forma de Pagamento</label>
       <div class="pay-method-grid" style="margin:8px 0 0">
-        <button class="pay-method-btn disabled" id="parPayDinheiro">
+        <button class="pay-method-btn disabled">
           <span class="pay-icon">💵</span>Dinheiro
           <span class="pay-badge-soon">EM BREVE</span>
         </button>
-        <button class="pay-method-btn disabled" id="parPayCartao">
+        <button class="pay-method-btn disabled">
           <span class="pay-icon">💳</span>Cartão
           <span class="pay-badge-soon">EM BREVE</span>
         </button>
@@ -466,20 +467,18 @@
       </div>
     </div>
     <div style="margin-top:8px;">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">📊 Histórico de Pagamentos</div>
-      <div class="historico-list" id="parHistorico">
-        <p style="color:var(--muted);font-size:13px">Nenhum pagamento registrado.</p>
-      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">📊 Histórico</div>
+      <div class="historico-list" id="parHistorico"></div>
     </div>
     <div class="modal-buttons">
       <button class="btn btn-secondary" onclick="document.getElementById('modalParcialOverlay').classList.remove('open')">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarParcial()" style="background:#f59e0b;color:#000;">🟠 Registrar Pagamento</button>
+      <button class="btn btn-primary" onclick="confirmarParcial()" style="background:#f59e0b;color:#000;">🟠 Registrar</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL PAGAMENTO -->
-<div class="modal-overlay" id="modalPagamentoOverlay" onclick="fecharModalPagamento(event)">
+<div class="modal-overlay" id="modalPagamentoOverlay" onclick="fecharOverlay(event,'modalPagamentoOverlay')">
   <div class="modal">
     <div class="modal-header">💰 Confirmar Pagamento</div>
     <input type="hidden" id="pagCidx">
@@ -492,7 +491,7 @@
     <div class="negociar-section">
       <label class="negociar-toggle">
         <input type="checkbox" id="negociarCheck" onchange="toggleNegociar()">
-        🤝 Negociar / Pagamento parcial
+        🤝 Negociar valor
       </label>
       <div class="negociar-fields" id="negociarFields">
         <div class="form-group" style="margin-top:8px">
@@ -501,18 +500,18 @@
         </div>
         <div class="form-group">
           <label>Observação</label>
-          <input type="text" id="pagObsNegociado" placeholder="Ex: Acordo parcial, desconto concedido...">
+          <input type="text" id="pagObsNegociado" placeholder="Ex: Desconto concedido...">
         </div>
         <div class="info-negociacao" id="resumoNegociacao"></div>
       </div>
     </div>
     <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Forma de Pagamento</div>
     <div class="pay-method-grid">
-      <button class="pay-method-btn disabled" id="payDinheiro">
+      <button class="pay-method-btn disabled">
         <span class="pay-icon">💵</span>Dinheiro
         <span class="pay-badge-soon">EM BREVE</span>
       </button>
-      <button class="pay-method-btn disabled" id="payCartao">
+      <button class="pay-method-btn disabled">
         <span class="pay-icon">💳</span>Cartão
         <span class="pay-badge-soon">EM BREVE</span>
       </button>
@@ -521,28 +520,89 @@
       </button>
     </div>
     <div class="pix-info-box" id="pixInfoBox">
-      <div class="pix-label">⚡ DADOS PARA PAGAMENTO PIX</div>
+      <div class="pix-label">⚡ DADOS PIX</div>
       <div class="pix-dados" id="pixInfoContent"></div>
-      <button class="btn btn-secondary" style="width:100%;margin-top:10px;font-size:12px" onclick="copiarChavePix()">📋 Copiar Chave PIX</button>
+      <button class="btn btn-secondary" style="width:100%;margin-top:10px;font-size:12px" onclick="copiarChavePix()">📋 Copiar Chave</button>
     </div>
     <div class="modal-buttons">
-      <button class="btn btn-secondary" onclick="closeModalPagamento()">Cancelar</button>
-      <button class="btn btn-primary" id="btnConfirmarPag" onclick="confirmarPagamento()" style="background:#22c55e;color:#000">✅ Confirmar Pagamento</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('modalPagamentoOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" id="btnConfirmarPag" onclick="confirmarPagamento()" style="background:#22c55e;color:#000">✅ Confirmar</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL DÉBITO -->
-<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+<div class="modal-overlay" id="modalOverlay" onclick="fecharOverlay(event,'modalOverlay')">
   <div class="modal">
     <div class="modal-header">💳 Adicionar Débito</div>
     <input type="hidden" id="modalClienteIdx">
     <div class="form-group">
       <label>Descrição</label>
-      <input type="text" id="modalDesc
-        <div class="toast" id="toast"></div>
+      <input type="text" id="modalDesc" placeholder="Ex: Mensalidade Fevereiro">
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="modalValor" step="0.01" placeholder="0,00">
+      </div>
+      <div class="form-group">
+        <label>Vencimento</label>
+        <input type="date" id="modalData">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Observações</label>
+      <textarea id="modalObs" placeholder="Informações adicionais..."></textarea>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="document.getElementById('modalOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="adicionarDebito()">Adicionar</button>
+    </div>
+  </div>
+</div>
 
-<!-- Firebase SDK -->
+<!-- MODAL COBRAR -->
+<div class="modal-overlay" id="modalCobrarOverlay" onclick="fecharOverlay(event,'modalCobrarOverlay')">
+  <div class="modal">
+    <div class="modal-header">💬 Enviar Cobrança</div>
+    <div class="form-group">
+      <label>Telefone</label>
+      <input type="tel" id="cobrarTelefone" readonly>
+    </div>
+    <div class="form-group">
+      <label>Mensagem</label>
+      <textarea id="cobrarMsgPreview" rows="8"></textarea>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="document.getElementById('modalCobrarOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="enviarCobrar()">📲 Enviar WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR CLIENTE -->
+<div class="modal-overlay" id="modalEditarOverlay" onclick="fecharOverlay(event,'modalEditarOverlay')">
+  <div class="modal">
+    <div class="modal-header">✏️ Editar Cliente</div>
+    <input type="hidden" id="editarIdx">
+    <div class="form-group">
+      <label>Nome Completo</label>
+      <input type="text" id="editarNome" placeholder="Ex: João Silva">
+    </div>
+    <div class="form-group">
+      <label>Telefone</label>
+      <input type="tel" id="editarTelefone" placeholder="Ex: 11999887766">
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="document.getElementById('modalEditarOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicao()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -550,7 +610,6 @@
 const firebaseConfig = {
   apiKey: "AIzaSyC-hSugRsEfKbTqRUqWM1H_NnG82nqg0ww",
   authDomain: "app1dominium-recovery.firebaseapp.com",
-  databaseURL: "https://app1dominium-recovery-default-rtdb.firebaseio.com",
   projectId: "app1dominium-recovery",
   storageBucket: "app1dominium-recovery.firebasestorage.app",
   messagingSenderId: "301887683528",
@@ -583,15 +642,13 @@ auth.onAuthStateChanged(user => {
 
 function switchLoginTab(tab) {
   document.getElementById('formEntrar').style.display = tab==='entrar' ? 'block' : 'none';
-  document.getElementById('formAtivar').style.display = tab==='ativar' ? 'block' : 'none';
+  document.getElementById('formAtivar').style.display = tab==='ativar'  ? 'block' : 'none';
   const on  = 'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#c9a84c;border-bottom:2px solid #c9a84c;transition:all 0.2s;';
   const off = 'flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:#5a5a5a;border-bottom:2px solid transparent;transition:all 0.2s;';
   document.getElementById('tabEntrar').style.cssText = tab==='entrar' ? on : off;
   document.getElementById('tabAtivar').style.cssText  = tab==='ativar'  ? on : off;
 }
-window.switchLoginTab = switchLoginTab;
 
-// ========== ENTRAR (CORRIGIDO) ==========
 async function entrar() {
   const email = document.getElementById('loginEmail').value.trim();
   const senha = document.getElementById('loginSenha').value;
@@ -609,7 +666,6 @@ async function entrar() {
   try {
     await auth.signInWithEmailAndPassword(email, senha);
   } catch(e) {
-    console.error('Erro login:', e.code, e.message);
     const msgs = {
       'auth/invalid-credential':     'E-mail ou senha incorretos.',
       'auth/wrong-password':         'Senha incorreta.',
@@ -625,7 +681,6 @@ async function entrar() {
     btn.disabled = false;
   }
 }
-window.entrar = entrar;
 
 async function ativar() {
   const email = document.getElementById('cadEmail').value.trim();
@@ -643,27 +698,25 @@ async function ativar() {
     if (d.usado)  { err.textContent = '❌ Código já utilizado.'; err.classList.add('show'); return; }
     await auth.createUserWithEmailAndPassword(email, senha);
     await db2.collection('codigos').doc(code).update({ usado: true, cliente: email });
-    showToast('✅ Conta criada com sucesso!');
+    showToast('✅ Conta criada!');
   } catch(e) {
-    err.textContent = e.code === 'auth/email-already-in-use'
-      ? 'E-mail já cadastrado. Use "Entrar".'
-      : 'Erro: ' + e.message;
+    err.textContent = e.code === 'auth/email-already-in-use' ? 'E-mail já cadastrado.' : 'Erro: ' + e.message;
     err.classList.add('show');
   }
 }
-window.ativar = ativar;
 
 async function sair() {
   await auth.signOut();
   showToast('👋 Até logo!');
 }
-window.sair = sair;
 
 document.getElementById('activationCode').addEventListener('input', function(e) {
   e.target.value = e.target.value.toUpperCase();
 });
 
 let clientes = JSON.parse(localStorage.getItem('clientes_data')) || [];
+let historicoCobrancas = JSON.parse(localStorage.getItem('historico_cobrancas')) || [];
+let historicoPagamentos = JSON.parse(localStorage.getItem('historico_pagamentos')) || [];
 
 const MSG_PADRAO = `Olá, {nome}! Tudo bem?
 
@@ -692,54 +745,57 @@ Favorecido: {pix_nome}
 
 💰 *Valor: {total}*
 
-Após o pagamento, envie o comprovante por aqui para darmos baixa no sistema.
-
-Qualquer dúvida, estou à disposição!
+Após o pagamento, envie o comprovante.
 
 Att,
 {atendente}
 {empresa}`;
 
-function showTab(tab) {
+function showTab(tab, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
   document.getElementById('sec-' + tab).classList.add('active');
-  if (tab === 'resumo') renderResumo();
-  if (tab === 'config') carregarConfig();
+  if (tab === 'resumo')    renderResumo();
+  if (tab === 'config')    carregarConfig();
+  if (tab === 'historico') renderHistorico();
 }
 
 function getConfig() {
   return JSON.parse(localStorage.getItem('app_config')) || {};
 }
+
 function salvarConfig() {
   const cfg = {
-    empresa:      document.getElementById('configEmpresa').value,
-    atendente:    document.getElementById('configAtendente').value,
-    cargo:        document.getElementById('configCargo').value,
-    mensagem:     document.getElementById('configMensagem').value,
-    pixTipo:      document.getElementById('configPixTipo').value,
-    pixChave:     document.getElementById('configPixChave').value,
-    pixNome:      document.getElementById('configPixNome').value,
-    mensagemPix:  document.getElementById('configMensagemPix').value
+    empresa:     document.getElementById('configEmpresa').value,
+    atendente:   document.getElementById('configAtendente').value,
+    cargo:       document.getElementById('configCargo').value,
+    mensagem:    document.getElementById('configMensagem').value,
+    pixTipo:     document.getElementById('configPixTipo').value,
+    pixChave:    document.getElementById('configPixChave').value,
+    pixNome:     document.getElementById('configPixNome').value,
+    mensagemPix: document.getElementById('configMensagemPix').value
   };
   localStorage.setItem('app_config', JSON.stringify(cfg));
   showToast('⚙️ Configurações salvas!');
 }
+
 function carregarConfig() {
   const cfg = getConfig();
-  document.getElementById('configEmpresa').value      = cfg.empresa || '';
-  document.getElementById('configAtendente').value    = cfg.atendente || '';
-  document.getElementById('configCargo').value        = cfg.cargo || '';
-  document.getElementById('configMensagem').value     = cfg.mensagem || MSG_PADRAO;
-  document.getElementById('configPixTipo').value      = cfg.pixTipo || '';
-  document.getElementById('configPixChave').value     = cfg.pixChave || '';
-  document.getElementById('configPixNome').value      = cfg.pixNome || '';
-  document.getElementById('configMensagemPix').value  = cfg.mensagemPix || MSG_PIX_PADRAO;
+  document.getElementById('configEmpresa').value     = cfg.empresa || '';
+  document.getElementById('configAtendente').value   = cfg.atendente || '';
+  document.getElementById('configCargo').value       = cfg.cargo || '';
+  document.getElementById('configMensagem').value    = cfg.mensagem || MSG_PADRAO;
+  document.getElementById('configPixTipo').value     = cfg.pixTipo || '';
+  document.getElementById('configPixChave').value    = cfg.pixChave || '';
+  document.getElementById('configPixNome').value     = cfg.pixNome || '';
+  document.getElementById('configMensagemPix').value = cfg.mensagemPix || MSG_PIX_PADRAO;
 }
 
 function salvarStorage() {
   localStorage.setItem('clientes_data', JSON.stringify(clientes));
+  localStorage.setItem('historico_cobrancas', JSON.stringify(historicoCobrancas));
+  localStorage.setItem('historico_pagamentos', JSON.stringify(historicoPagamentos));
   atualizarHeaderTotal();
 }
 
@@ -753,11 +809,9 @@ function salvarCliente() {
   if (valor) {
     cliente.debitos.push({
       desc:  document.getElementById('desc').value.trim() || 'Débito',
-      valor,
-      data:  document.getElementById('data').value,
+      valor, data: document.getElementById('data').value,
       obs:   document.getElementById('obs').value.trim(),
-      pago:  false,
-      id:    Date.now()
+      pago:  false, id: Date.now()
     });
   }
   clientes.push(cliente);
@@ -768,7 +822,7 @@ function salvarCliente() {
   document.getElementById('valor').value    = '';
   document.getElementById('data').value     = '';
   document.getElementById('obs').value      = '';
-  showTab('clientes');
+  showTab('clientes', document.querySelectorAll('.tab')[1]);
   renderClientes();
   showToast('✅ Cliente salvo!');
 }
@@ -792,55 +846,53 @@ function renderClientes() {
   if (sort === 'recente') filtered.sort((a,b) => b.id - a.id);
 
   document.getElementById('clientesList').innerHTML = filtered.map(c => {
-    const realIdx      = clientes.indexOf(c);
-    const initial      = c.nome.charAt(0).toUpperCase();
+    const realIdx       = clientes.indexOf(c);
+    const initial       = c.nome.charAt(0).toUpperCase();
     const totalPendente = c.debitos.filter(d=>!d.pago).reduce((s,d)=>s+d.valor,0);
-    const status       = getStatus(c);
-    const statusCfg    = {
+    const st            = getStatus(c);
+    const statusCfg     = {
       pendente:  { label:'EM ABERTO', bg:'var(--red-dim)',  color:'var(--red)',    icon:'🔴' },
       pago:      { label:'PAGO',      bg:'#2a1f08',         color:'#c9a84c',       icon:'✅' },
       parcial:   { label:'PARCIAL',   bg:'#78350f',         color:'var(--yellow)', icon:'🟠' },
       negociado: { label:'NEGOCIADO', bg:'#1e3a5f',         color:'#60a5fa',       icon:'🤝' }
     };
-    const sc         = statusCfg[status] || statusCfg.pendente;
-    const totalClass = status === 'negociado' ? 'parcial' : status;
+    const sc         = statusCfg[st] || statusCfg.pendente;
+    const totalClass = st === 'negociado' ? 'parcial' : st;
 
     const debitosHTML = c.debitos.map((d,di) => {
-      const isNeg      = d.negociado && !d.pago;
-      const isParcial  = d.pagamentos && d.pagamentos.length > 0 && !d.pago;
-      const icon       = d.pago ? '✅' : (isNeg ? '🤝' : (isParcial ? '🟠' : '💳'));
-      const valClass   = d.pago ? 'pago' : (isNeg ? '' : (isParcial ? '' : 'pendente'));
-      const valStyle   = isNeg ? 'color:var(--yellow)' : (isParcial ? 'color:var(--yellow)' : '');
+      const isNeg     = d.negociado && !d.pago;
+      const isParcial = d.pagamentos && d.pagamentos.length > 0 && !d.pago;
+      const icon      = d.pago ? '✅' : (isNeg ? '🤝' : (isParcial ? '🟠' : '💳'));
+      const valClass  = d.pago ? 'pago' : (isParcial || isNeg ? '' : 'pendente');
+      const valStyle  = isNeg || isParcial ? 'color:var(--yellow)' : '';
       const valDisplay = isParcial
-        ? formatarValor(d.valor) + ' <span style="font-size:10px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valorOriginal||d.valor) + '</span>'
+        ? formatarValor(d.valor)
         : (isNeg && d.valorNegociado
-            ? formatarValor(d.valorNegociado) + ' <span style="font-size:10px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valor) + '</span>'
-            :            formatarValor(d.valor));
-      const tagNeg     = isNeg ? ' <span style="font-size:9px;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;font-weight:700;">NEG</span>' : '';
-      const tagPar     = isParcial ? ' <span style="font-size:9px;background:#78350f;color:var(--yellow);padding:1px 5px;border-radius:6px;font-weight:700;">PARCIAL</span>' : '';
-      const obsLine    = [d.data ? formatarData(d.data) : '', d.obs ? '· '+d.obs : '', d.obsNegociado ? '🤝 '+d.obsNegociado : ''].filter(Boolean).join(' ');
-      const historicoHtml = isParcial ? '<div style="margin-top:6px;font-size:11px;color:var(--muted);">' +
+            ? formatarValor(d.valorNegociado) + ' <span style="font-size:10px;color:var(--muted);text-decoration:line-through;margin-left:4px">' + formatarValor(d.valorOriginal||d.valor) + '</span>'
+            : formatarValor(d.valor));
+      const tagNeg    = isNeg ? ' <span style="font-size:9px;background:#1e3a5f;color:#60a5fa;padding:1px 5px;border-radius:6px;font-weight:700;">NEG</span>' : '';
+      const tagPar    = isParcial ? ' <span style="font-size:9px;background:#78350f;color:var(--yellow);padding:1px 5px;border-radius:6px;font-weight:700;">PARCIAL</span>' : '';
+      const obsLine   = [d.data ? formatarData(d.data) : '', d.obs ? '· '+d.obs : '', d.obsNegociado ? '🤝 '+d.obsNegociado : ''].filter(Boolean).join(' ');
+      const histHTML  = isParcial ? '<div style="margin-top:6px;font-size:11px;color:var(--muted);">' +
         (d.pagamentos||[]).map(p=>`<span>📅 ${p.data}: <strong style="color:#22c55e">${formatarValor(p.valor)}</strong></span>`).join(' · ') + '</div>' : '';
-      const audioHtml  = (isNeg && d.audioUrl) ? `<audio controls src="${d.audioUrl}" style="width:100%;margin-top:6px;height:32px;"></audio>` : '';
+      const audioHTML = (isNeg && d.audioUrl) ? `<audio controls src="${d.audioUrl}" style="width:100%;margin-top:6px;height:32px;"></audio>` : '';
       return `
-        <div class="debt-item ${d.pago ? 'pago' : ''}">
+        <div class="debt-item ${d.pago?'pago':''}">
           <div class="debt-icon">${icon}</div>
           <div class="debt-info" style="min-width:0;flex:1;">
             <div class="debt-desc">${d.desc}${tagNeg}${tagPar}</div>
             <div class="debt-date">${obsLine}</div>
-            ${historicoHtml}
-            ${audioHtml}
+            ${histHTML}${audioHTML}
           </div>
           <div class="debt-valor ${valClass}" style="${valStyle};flex-shrink:0">${valDisplay}</div>
           <div class="debt-actions">
             ${d.pago
-              ? `<button class="btn btn-small" style="background:#052e16;color:#22c55e;border:1px solid #166534;font-size:10px;font-weight:700;padding:5px 9px;" onclick="desmarcarPago(${realIdx},${di})">✅</button>`
-              : `<button class="btn btn-small" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-size:10px;font-weight:700;padding:5px 9px;" onclick="abrirSeletorStatus(${realIdx},${di})">⚡</button>`
+              ? `<button class="btn btn-small" style="background:#052e16;color:#22c55e;border:1px solid #166534;font-size:10px;padding:5px 9px;" onclick="desmarcarPago(${realIdx},${di})">✅</button>`
+              : `<button class="btn btn-small" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);font-size:10px;padding:5px 9px;" onclick="abrirSeletorStatus(${realIdx},${di})">⚡</button>`
             }
             <button class="btn btn-danger btn-small" onclick="deletarDebito(${realIdx},${di})">🗑</button>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
 
     const telLimpo = c.telefone.replace(/\D/g,'');
@@ -853,7 +905,7 @@ function renderClientes() {
             <div class="client-phone" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
               <span>📞 ${c.telefone}</span>
               <a href="tel:${telLimpo}" onclick="event.stopPropagation()"
-                 style="display:inline-flex;align-items:center;gap:4px;background:#1a2e1a;color:#22c55e;border:1px solid #166534;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">
+                style="display:inline-flex;align-items:center;gap:4px;background:#1a2e1a;color:#22c55e;border:1px solid #166534;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-decoration:none;">
                 📲 Ligar
               </a>
             </div>
@@ -867,41 +919,39 @@ function renderClientes() {
         <div class="client-body" id="body-${realIdx}">
           <div class="debt-list">${debitosHTML}</div>
           <div class="action-row">
-            <button class="btn btn-secondary btn-small" onclick="abrirModal(${realIdx})">➕ Débito</button>
+            <button class="btn btn-secondary btn-small" onclick="abrirModalDebito(${realIdx})">➕ Débito</button>
             <a href="tel:${telLimpo}" class="btn btn-small"
-               style="background:#1a2e1a;color:#22c55e;border:1px solid #166534;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+              style="background:#1a2e1a;color:#22c55e;border:1px solid #166534;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
               📲 Ligar
             </a>
             <button class="btn btn-secondary btn-small" onclick="cobrar(${realIdx})">💬 Cobrar</button>
-            <button class="btn btn-secondary btn-small" onclick="enviarPix(${realIdx})">💳 PIX</button>
-            <button class="btn btn-secondary btn-small" onclick="editarCliente(${realIdx})">✏️ Editar</button>
+            <button class="btn btn-secondary btn-small" onclick="enviarPix(${realIdx})">⚡ PIX</button>
+            <button class="btn btn-secondary btn-small" onclick="abrirEditar(${realIdx})">✏️ Editar</button>
             <button class="btn btn-danger btn-small" onclick="deletarCliente(${realIdx})">🗑 Excluir</button>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
 function toggleCard(idx) {
-  const body = document.getElementById('body-' + idx);
-  const chev = document.getElementById('chev-' + idx);
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
+  document.getElementById('body-'+idx).classList.toggle('open');
+  document.getElementById('chev-'+idx).classList.toggle('open');
 }
 
 function getStatus(c) {
   if (!c.debitos || c.debitos.length === 0) return 'pago';
   const todos      = c.debitos.length;
-  const pagos      = c.debitos.filter(d => d.pago).length;
-  const negociados = c.debitos.filter(d => d.negociado && !d.pago).length;
+  const pagos      = c.debitos.filter(d=>d.pago).length;
+  const negociados = c.debitos.filter(d=>d.negociado && !d.pago).length;
   if (pagos === todos) return 'pago';
   if (pagos === 0 && negociados === 0) return 'pendente';
   if (pagos === 0 && negociados > 0)  return 'negociado';
   return 'parcial';
 }
 
-function abrirModal(idx) {
+// ===== MODAL DÉBITO CORRIGIDO =====
+function abrirModalDebito(idx) {
   document.getElementById('modalClienteIdx').value = idx;
   document.getElementById('modalDesc').value  = '';
   document.getElementById('modalValor').value = '';
@@ -909,20 +959,13 @@ function abrirModal(idx) {
   document.getElementById('modalObs').value   = '';
   document.getElementById('modalOverlay').classList.add('open');
 }
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-}
-function fecharModal(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
 
 function adicionarDebito() {
   const idx = parseInt(document.getElementById('modalClienteIdx').value);
   const v   = parseFloat(document.getElementById('modalValor').value);
-  const d   = document.getElementById('modalDesc').value.trim();
   if (!v) { showToast('⚠️ Informe o valor!'); return; }
   clientes[idx].debitos.push({
-    desc:  d || 'Débito',
+    desc:  document.getElementById('modalDesc').value.trim() || 'Débito',
     valor: v,
     data:  document.getElementById('modalData').value,
     obs:   document.getElementById('modalObs').value.trim(),
@@ -930,36 +973,156 @@ function adicionarDebito() {
     id:    Date.now()
   });
   salvarStorage();
-  closeModal();
+  document.getElementById('modalOverlay').classList.remove('open');
   renderClientes();
   showToast('💳 Débito adicionado!');
 }
 
+// ===== EDITAR CLIENTE CORRIGIDO =====
+function abrirEditar(idx) {
+  document.getElementById('editarIdx').value      = idx;
+  document.getElementById('editarNome').value     = clientes[idx].nome;
+  document.getElementById('editarTelefone').value = clientes[idx].telefone;
+  document.getElementById('modalEditarOverlay').classList.add('open');
+}
+
+function salvarEdicao() {
+  const idx  = parseInt(document.getElementById('editarIdx').value);
+  const nome = document.getElementById('editarNome').value.trim();
+  const tel  = document.getElementById('editarTelefone').value.trim();
+  if (!nome) { showToast('⚠️ Informe o nome!'); return; }
+  if (!tel)  { showToast('⚠️ Informe o telefone!'); return; }
+  clientes[idx].nome     = nome;
+  clientes[idx].telefone = tel;
+  salvarStorage();
+  document.getElementById('modalEditarOverlay').classList.remove('open');
+  renderClientes();
+  showToast('✅ Cliente atualizado!');
+}
+
+function deletarCliente(idx) {
+  if (!confirm('Excluir cliente ' + clientes[idx].nome + '?')) return;
+  clientes.splice(idx, 1);
+  salvarStorage();
+  renderClientes();
+  showToast('🗑 Cliente removido');
+}
+
+function deletarDebito(cidx, didx) {
+  if (!confirm('Excluir este débito?')) return;
+  clientes[cidx].debitos.splice(didx, 1);
+  salvarStorage();
+  renderClientes();
+  showToast('🗑 Débito removido');
+}
+
+function desmarcarPago(cidx, didx) {
+  if (!confirm('Desmarcar como pago?')) return;
+  const d      = clientes[cidx].debitos[didx];
+  d.pago       = false;
+  d.formaPagamento = null;
+  d.dataPagamento  = null;
+  salvarStorage();
+  renderClientes();
+  showToast('↩️ Débito reaberto!');
+}
+
+// ===== COBRAR CORRIGIDO =====
+function cobrar(idx) {
+  const c         = clientes[idx];
+  const cfg       = getConfig();
+  const pendentes = c.debitos.filter(d=>!d.pago);
+  const total     = pendentes.reduce((s,d)=>s+d.valor,0);
+  let debitosStr  = '';
+  pendentes.forEach(d => {
+    debitosStr += `• ${d.desc}: ${formatarValor(d.valor)}`;
+    if (d.data) debitosStr += ` (venc: ${formatarData(d.data)})`;
+    debitosStr += '\n';
+  });
+  const msg = (cfg.mensagem || MSG_PADRAO)
+    .replace(/{nome}/g,      c.nome.split(' ')[0])
+    .replace(/{empresa}/g,   cfg.empresa   || '[Empresa]')
+    .replace(/{atendente}/g, cfg.atendente || '[Atendente]')
+    .replace(/{cargo}/g,     cfg.cargo     || '')
+    .replace(/{total}/g,     formatarValor(total))
+    .replace(/{debitos}/g,   debitosStr);
+  document.getElementById('cobrarMsgPreview').value = msg;
+  document.getElementById('cobrarTelefone').value   = c.telefone.replace(/\D/g,'');
+  document.getElementById('modalCobrarOverlay').classList.add('open');
+}
+
+function enviarCobrar() {
+  const tel    = document.getElementById('cobrarTelefone').value.replace(/\D/g,'');
+  const msg    = document.getElementById('cobrarMsgPreview').value;
+  const telFinal = tel.startsWith('55') ? tel : '55'+tel;
+  // Registra no histórico
+  const cidx = clientes.findIndex(c => c.telefone.replace(/\D/g,'') === tel || '55'+c.telefone.replace(/\D/g,'') === telFinal);
+  if (cidx >= 0) {
+    historicoCobrancas.unshift({
+      nome:  clientes[cidx].nome,
+      tel:   tel,
+      data:  new Date().toLocaleDateString('pt-BR'),
+      hora:  new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}),
+      msg:   msg
+    });
+    salvarStorage();
+  }
+  window.open(`https://wa.me/${telFinal}?text=${encodeURIComponent(msg)}`);
+  document.getElementById('modalCobrarOverlay').classList.remove('open');
+}
+
+// ===== PIX CORRIGIDO =====
+function enviarPix(idx) {
+  const c   = clientes[idx];
+  const cfg = getConfig();
+  if (!cfg.pixChave) {
+    if (confirm('PIX não configurado! Configurar agora?')) {
+      showTab('config', document.querySelectorAll('.tab')[4]);
+    }
+    return;
+  }
+  const pendentes = c.debitos.filter(d=>!d.pago);
+  const total     = pendentes.reduce((s,d)=>s+d.valor,0);
+  const msg = (cfg.mensagemPix || MSG_PIX_PADRAO)
+    .replace(/{nome}/g,      c.nome.split(' ')[0])
+    .replace(/{empresa}/g,   cfg.empresa       || '[Empresa]')
+    .replace(/{atendente}/g, cfg.atendente || '[Atendente]')
+    .replace(/{total}/g,     formatarValor(total))
+    .replace(/{pix_tipo}/g,  cfg.pixTipo  || 'PIX')
+    .replace(/{pix_chave}/g, cfg.pixChave || '')
+    .replace(/{pix_nome}/g,  cfg.pixNome  || cfg.empresa || '');
+  document.getElementById('cobrarMsgPreview').value = msg;
+  document.getElementById('cobrarTelefone').value   = c.telefone.replace(/\D/g,'');
+  document.getElementById('modalCobrarOverlay').classList.add('open');
+  navigator.clipboard.writeText(cfg.pixChave).then(() => showToast('📋 Chave PIX copiada!')).catch(()=>{});
+}
+
+// ===== MODAL PAGAMENTO =====
 let pagMetodoSelecionado = null;
 
 function abrirModalPagamento(cidx, didx) {
   const d = clientes[cidx].debitos[didx];
-  document.getElementById('pagCidx').value       = cidx;
-  document.getElementById('pagDidx').value       = didx;
+  document.getElementById('pagCidx').value            = cidx;
+  document.getElementById('pagDidx').value            = didx;
   document.getElementById('pagDebtDesc').textContent  = d.desc;
   document.getElementById('pagDebtValor').textContent = formatarValor(d.valorNegociado || d.valor);
   document.getElementById('pagValorNegociado').value  = d.valorNegociado || '';
-  document.getElementById('pagObsNegociado').value    = d.obsNegociado || '';
+  document.getElementById('pagObsNegociado').value    = d.obsNegociado   || '';
   pagMetodoSelecionado = null;
-  const jaNegociado = d.negociado && !d.pago;
-  document.getElementById('negociarCheck').checked = jaNegociado;
-  document.getElementById('negociarFields').classList.toggle('show', jaNegociado);
+  const jaNeg = d.negociado && !d.pago;
+  document.getElementById('negociarCheck').checked = jaNeg;
+  document.getElementById('negociarFields').classList.toggle('show', jaNeg);
   document.getElementById('pixInfoBox').style.display = 'none';
-  document.querySelectorAll('.pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
-  document.getElementById('resumoNegociacao').style.display = jaNegociado ? 'block' : 'none';
-  if (jaNegociado && d.valorNegociado) atualizarResumoPag();
+  document.querySelectorAll('#modalPagamentoOverlay .pay-method-btn:not(.disabled)').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('resumoNegociacao').style.display = 'none';
+  if (jaNeg && d.valorNegociado) atualizarResumoPag();
   atualizarBtnConfirmar();
   document.getElementById('modalPagamentoOverlay').classList.add('open');
 }
 
 function atualizarBtnConfirmar() {
   const negociar = document.getElementById('negociarCheck').checked;
-  const btn = document.getElementById('btnConfirmarPag');
+  const btn      = document.getElementById('btnConfirmarPag');
   if (!btn) return;
   if (negociar && !pagMetodoSelecionado) {
     btn.textContent      = '🤝 Salvar Negociação';
@@ -972,13 +1135,6 @@ function atualizarBtnConfirmar() {
   }
 }
 
-function fecharModalPagamento(e) {
-  if (e.target === document.getElementById('modalPagamentoOverlay')) closeModalPagamento();
-}
-function closeModalPagamento() {
-  document.getElementById('modalPagamentoOverlay').classList.remove('open');
-}
-
 function toggleNegociar() {
   const checked = document.getElementById('negociarCheck').checked;
   document.getElementById('negociarFields').classList.toggle('show', checked);
@@ -986,7 +1142,7 @@ function toggleNegociar() {
     document.getElementById('resumoNegociacao').style.display = 'none';
     pagMetodoSelecionado = null;
     document.getElementById('pixInfoBox').style.display = 'none';
-    document.querySelectorAll('.pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('#modalPagamentoOverlay .pay-method-btn:not(.disabled)').forEach(b=>b.classList.remove('selected'));
   }
   atualizarBtnConfirmar();
 }
@@ -994,13 +1150,13 @@ function toggleNegociar() {
 function atualizarResumoPag() {
   const cidx   = parseInt(document.getElementById('pagCidx').value);
   const didx   = parseInt(document.getElementById('pagDidx').value);
-  if (isNaN(cidx) || isNaN(didx)) return;
+  if (isNaN(cidx)||isNaN(didx)) return;
   const d      = clientes[cidx].debitos[didx];
   const valNeg = parseFloat(document.getElementById('pagValorNegociado').value);
   const box    = document.getElementById('resumoNegociacao');
   if (valNeg > 0 && d) {
     const desc = d.valor - valNeg;
-    const pct  = ((desc / d.valor) * 100).toFixed(1);
+    const pct  = ((desc/d.valor)*100).toFixed(1);
     box.style.display = 'block';
     box.innerHTML = `💡 Original: <strong>${formatarValor(d.valor)}</strong> → Negociado: <strong>${formatarValor(valNeg)}</strong> (−${pct}%)`;
   } else {
@@ -1010,21 +1166,17 @@ function atualizarResumoPag() {
 
 function selecionarPagamento(metodo) {
   pagMetodoSelecionado = metodo;
-  document.querySelectorAll('.pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
-  document.getElementById('pay' + metodo.charAt(0).toUpperCase() + metodo.slice(1)).classList.add('selected');
+  document.querySelectorAll('#modalPagamentoOverlay .pay-method-btn:not(.disabled)').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('payPix').classList.add('selected');
   atualizarBtnConfirmar();
-  if (metodo === 'pix') {
-    const cfg     = getConfig();
-    const box     = document.getElementById('pixInfoBox');
-    const content = document.getElementById('pixInfoContent');
-    box.style.display = 'block';
-    if (cfg.pixChave) {
-      content.innerHTML = `Tipo: <strong>${cfg.pixTipo||'—'}</strong><br>Chave: <strong>${cfg.pixChave}</strong><br>Favorecido: <strong>${cfg.pixNome||cfg.empresa||'—'}</strong>`;
-    } else {
-      content.innerHTML = `<span style="color:var(--red)">⚠️ Chave PIX não configurada.</span>`;
-    }
+  const cfg     = getConfig();
+  const box     = document.getElementById('pixInfoBox');
+  const content = document.getElementById('pixInfoContent');
+  box.style.display = 'block';
+  if (cfg.pixChave) {
+    content.innerHTML = `Tipo: <strong>${cfg.pixTipo||'—'}</strong><br>Chave: <strong>${cfg.pixChave}</strong><br>Favorecido: <strong>${cfg.pixNome||cfg.empresa||'—'}</strong>`;
   } else {
-    document.getElementById('pixInfoBox').style.display = 'none';
+    content.innerHTML = `<span style="color:var(--red)">⚠️ Chave PIX não configurada.</span>`;
   }
 }
 
@@ -1032,8 +1184,8 @@ function copiarChavePix() {
   const cfg = getConfig();
   if (cfg.pixChave) {
     navigator.clipboard.writeText(cfg.pixChave)
-      .then(() => showToast('📋 Chave PIX copiada!'))
-      .catch(() => showToast('❌ Não foi possível copiar'));
+      .then(()=>showToast('📋 Chave PIX copiada!'))
+      .catch(()=>showToast('❌ Não foi possível copiar'));
   }
 }
 
@@ -1046,12 +1198,13 @@ function confirmarPagamento() {
   const d      = clientes[cidx].debitos[didx];
 
   if (negociar && !pagMetodoSelecionado) {
-    if (!valNeg || valNeg <= 0) { showToast('⚠️ Informe o valor negociado!'); return; }
+    if (!valNeg||valNeg<=0) { showToast('⚠️ Informe o valor negociado!'); return; }
     d.negociado      = true;
     d.valorNegociado = valNeg;
     d.obsNegociado   = obsNeg;
     d.pago           = false;
-    salvarStorage(); renderClientes(); closeModalPagamento();
+    salvarStorage(); renderClientes();
+    document.getElementById('modalPagamentoOverlay').classList.remove('open');
     showToast('🤝 Negociação registrada!');
     return;
   }
@@ -1067,239 +1220,34 @@ function confirmarPagamento() {
 
   d.pago           = true;
   d.formaPagamento = pagMetodoSelecionado;
-  d.dataPagamento  = new Date().toISOString().split('T')[0];
-  salvarStorage(); renderClientes(); closeModalPagamento();
-  const label = { pix:'PIX ⚡', dinheiro:'Dinheiro 💵', cartao:'Cartão 💳' };
-  showToast(`✅ Pago via ${label[pagMetodoSelecionado] || pagMetodoSelecionado}!`);
-}
+  d.dataPagamento  = new Date().toLocaleDateString('pt-BR');
 
-function desmarcarPago(cidx, didx) {
-  const d = clientes[cidx].debitos[didx];
-  if (!confirm('Desmarcar este débito como pago?')) return;
-  d.pago           = false;
-  d.formaPagamento = null;
-  d.dataPagamento  = null;
-  salvarStorage(); renderClientes();
-  showToast('↩️ Débito reaberto!');
-}
-
-function deletarDebito(cidx, didx) {
-  if (!confirm('Excluir este débito?')) return;
-  clientes[cidx].debitos.splice(didx, 1);
-  salvarStorage(); renderClientes();
-  showToast('🗑 Débito removido');
-}
-
-function deletarCliente(idx) {
-  if (!confirm('Excluir cliente ' + clientes[idx].nome + '?')) return;
-  clientes.splice(idx, 1);
-  salvarStorage(); renderClientes();
-  showToast('🗑 Cliente removido');
-}
-
-function editarCliente(idx) {
-  const c = clientes[idx];
-  document.getElementById('nome').value     = c.nome;
-  document.getElementById('telefone').value = c.telefone;
-  clientes.splice(idx, 1);
-  salvarStorage(); renderClientes();
-  showTab('novo');
-  showToast('✏️ Edite os dados e salve');
-}
-
-function cobrar(idx) {
-  const c        = clientes[idx];
-  const cfg      = getConfig();
-  const pendentes = c.debitos.filter(d => !d.pago);
-  const total    = pendentes.reduce((s,d) => s + d.valor, 0);
-  let debitosStr = '';
-  if (pendentes.length > 1) {
-    pendentes.forEach(d => {
-      debitosStr += `• ${d.desc}: ${formatarValor(d.valor)}`;
-      if (d.data) debitosStr += ` (venc: ${formatarData(d.data)})`;
-      debitosStr += '\n';
-    });
-  }
-  const empresa   = cfg.empresa   || '[Nome da Empresa]';
-  const atendente = cfg.atendente || '[Seu Nome]';
-  const cargo     = cfg.cargo     || '';
-  let msg = (cfg.mensagem || MSG_PADRAO)
-    .replace(/{nome}/g,      c.nome.split(' ')[0])
-    .replace(/{empresa}/g,   empresa)
-    .replace(/{atendente}/g, atendente)
-    .replace(/{cargo}/g,     cargo)
-    .replace(/{total}/g,     formatarValor(total))
-    .replace(/{debitos}/g,   debitosStr);
-  document.getElementById('cobrarMsgPreview').value = msg;
-  document.getElementById('cobrarTelefone').value   = c.telefone.replace(/\D/g,'');
-  document.getElementById('modalCobrarOverlay').classList.add('open');
-}
-
-function enviarCobrar() {
-  const tel    = document.getElementById('cobrarTelefone').value.replace(/\D/g,'');
-  const msg    = document.getElementById('cobrarMsgPreview').value;
-  const telFinal = tel.startsWith('55') ? tel : '55' + tel;
-  window.open(`https://wa.me/${telFinal}?text=${encodeURIComponent(msg)}`);
-  closeModalCobrar();
-}
-function closeModalCobrar() {
-  document.getElementById('modalCobrarOverlay').classList.remove('open');
-}
-function fecharModalCobrar(e) {
-  if (e.target === document.getElementById('modalCobrarOverlay')) closeModalCobrar();
-}
-
-function enviarPix(idx) {
-  const c   = clientes[idx];
-  const cfg = getConfig();
-  if (!cfg.pixChave || !cfg.pixTipo) {
-    if (confirm('Dados do PIX não configurados!\n\nDeseja configurar agora?')) {
-      showTab('config');
-      document.getElementById('configPixChave').focus();
-    }
-    return;
-  }
-  const pendentes = c.debitos.filter(d => !d.pago);
-  const total     = pendentes.reduce((s,d) => s + d.valor, 0);
-  const empresa   = cfg.empresa   || '[Nome da Empresa]';
-  const atendente = cfg.atendente || '[Seu Nome]';
-  const pixChave  = cfg.pixChave  || '';
-  let msg = (cfg.mensagemPix || MSG_PIX_PADRAO)
-    .replace(/{nome}/g,      c.nome.split(' ')[0])
-    .replace(/{empresa}/g,   empresa)
-    .replace(/{atendente}/g, atendente)
-    .replace(/{total}/g,     formatarValor(total))
-    .replace(/{pix_tipo}/g,  cfg.pixTipo || 'PIX')
-    .replace(/{pix_chave}/g, pixChave)
-    .replace(/{pix_nome}/g,  cfg.pixNome || empresa);
-  document.getElementById('cobrarMsgPreview').value = msg;
-  document.getElementById('cobrarTelefone').value   = c.telefone;
-  document.getElementById('modalCobrarOverlay').classList.add('open');
-  navigator.clipboard.writeText(pixChave)
-    .then(() => showToast('📋 Chave PIX copiada!'))
-    .catch(() => {});
-}
-
-function renderResumo() {
-  let totalPend = 0, totalPago = 0, totalNeg = 0, debitosAbertos = 0;
-  clientes.forEach(c => {
-    c.debitos.forEach(d => {
-      if (d.pago)           { totalPago += d.valorNegociado || d.valor; }
-      else if (d.negociado) { totalNeg  += d.valorNegociado || d.valor; debitosAbertos++; }
-      else                  { totalPend += d.valor; debitosAbertos++; }
-    });
+  // Registra no histórico de pagamentos
+  historicoPagamentos.unshift({
+    nome:  clientes[cidx].nome,
+    desc:  d.desc,
+    valor: d.valorNegociado || d.valor,
+    forma: pagMetodoSelecionado,
+    data:  new Date().toLocaleDateString('pt-BR'),
+    hora:  new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
   });
-  document.getElementById('sumPendente').textContent = formatarValor(totalPend);
-  document.getElementById('sumPago').textContent     = formatarValor(totalPago);
-  document.getElementById('sumNegociado').textContent= formatarValor(totalNeg);
-  document.getElementById('sumClientes').textContent = clientes.length;
-  document.getElementById('sumDebitos').textContent  = debitosAbertos;
 
-  const hoje = new Date();
-  const em7  = new Date(); em7.setDate(hoje.getDate() + 7);
-  let vencHtml = '';
-  clientes.forEach(c => {
-    c.debitos.forEach(d => {
-      if (!d.pago && d.data) {
-        const venc = new Date(d.data + 'T00:00:00');
-        if (venc >= hoje && venc <= em7) {
-          vencHtml += `
-            <div class="debt-item" style="margin-bottom:8px">
-              <div class="debt-icon">⚠️</div>
-              <div class="debt-info">
-                <div class="debt-desc">${c.nome} · ${d.desc}</div>
-                <div class="debt-date">${formatarData(d.data)}</div>
-              </div>
-              <div class="debt-valor pendente">${formatarValor(d.valor)}</div>
-            </div>`;
-        }
-      }
-    });
-  });
-  document.getElementById('vencendoContent').innerHTML = vencHtml ||
-    '<p style="color:var(--muted);font-size:13px">Nenhum débito vencendo nos próximos 7 dias.</p>';
+  salvarStorage(); renderClientes();
+  document.getElementById('modalPagamentoOverlay').classList.remove('open');
+  showToast('✅ Pagamento confirmado!');
 }
 
-function atualizarHeaderTotal() {
-  let total = 0;
-  clientes.forEach(c => c.debitos.forEach(d => {
-    if (!d.pago) total += d.valorNegociado || d.valor;
-  }));
-  document.getElementById('headerTotal').textContent = formatarValor(total);
-}
-
-function formatarValor(v) {
-  return 'R$ ' + (v||0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-}
-function formatarData(d) {
-  if (!d) return '';
-  const [y,m,day] = d.split('-');
-  return `${day}/${m}/${y}`;
-}
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-function cadastrarPorVoz() {
-  if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-    showToast('❌ Voz não suportada neste navegador'); return;
-  }
-  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  rec.lang = 'pt-BR';
-  rec.start();
-  showToast('🎤 Fale agora...');
-  rec.onresult = function(e) {
-    const texto  = e.results[0][0].transcript.toLowerCase();
-    const partes = texto.split(' ');
-    document.getElementById('nome').value     = partes[1] || '';
-    document.getElementById('telefone').value = partes[3] || '';
-    document.getElementById('valor').value    = partes[5] || '';
-    document.getElementById('obs').value      = partes.slice(7).join(' ');
-    showToast('✅ Dados capturados!');
-  };
-}
-
-function buscarContato() {
-  if (!('contacts' in navigator) || !('ContactsManager' in window)) {
-    showToast('❌ Seu navegador não suporta essa função. Use Chrome/Edge no Android.'); return;
-  }
-  navigator.contacts.select(['name','tel'], { multiple: false }).then(contacts => {
-    if (contacts && contacts.length > 0) {
-      const contato = contacts[0];
-      if (contato.name && contato.name.length > 0)
-        document.getElementById('nome').value = contato.name[0];
-      if (contato.tel && contato.tel.length > 0) {
-        let tel = contato.tel[0].replace(/\D/g,'');
-        if (tel.startsWith('55')) tel = tel.substring(2);
-        document.getElementById('telefone').value = tel;
-      }
-      showToast('✅ Contato importado com sucesso!');
-    }
-  }).catch(err => {
-    showToast(err.message.includes('denied')
-      ? '❌ Permissão negada.'
-      : '❌ Erro ao buscar contato.');
-  });
-}
-
-function listar() {
-  renderClientes();
-  renderResumo();
-}
-
+// ===== SELETOR STATUS =====
 function abrirSeletorStatus(cidx, didx) {
-  document.querySelectorAll('.status-dropdown-popup').forEach(el => el.remove());
+  document.querySelectorAll('.status-dropdown-popup').forEach(el=>el.remove());
   const popup = document.createElement('div');
   popup.className = 'status-dropdown-popup';
   popup.style.cssText = 'position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.8);';
   const opcoes = [
-    { icon:'🔴', label:'Em Aberto',        fn: () => marcarEmAberto(cidx,didx) },
-    { icon:'✅', label:'Pago',              fn: () => abrirModalPagamento(cidx,didx) },
-    { icon:'🤝', label:'Negociado',         fn: () => abrirModalNegociado(cidx,didx) },
-    { icon:'🟠', label:'Pagamento Parcial', fn: () => abrirModalParcial(cidx,didx) },
+    { icon:'🔴', label:'Em Aberto',        fn: ()=>marcarEmAberto(cidx,didx) },
+    { icon:'✅', label:'Pago',              fn: ()=>abrirModalPagamento(cidx,didx) },
+    { icon:'🤝', label:'Negociado',         fn: ()=>abrirModalNegociado(cidx,didx) },
+    { icon:'🟠', label:'Pagamento Parcial', fn: ()=>abrirModalParcial(cidx,didx) },
   ];
   opcoes.forEach(op => {
     const el = document.createElement('div');
@@ -1310,12 +1258,12 @@ function abrirSeletorStatus(cidx, didx) {
   });
   const btn  = event.target;
   const rect = btn.getBoundingClientRect();
-  popup.style.top  = (rect.bottom + 6) + 'px';
-  popup.style.left = Math.max(8, rect.left - 100) + 'px';
+  popup.style.top  = (rect.bottom+6)+'px';
+  popup.style.left = Math.max(8, rect.left-100)+'px';
   document.body.appendChild(popup);
-  setTimeout(() => {
+  setTimeout(()=>{
     document.addEventListener('click', function handler(e) {
-      if (!popup.contains(e.target)) { popup.remove(); document.removeEventListener('click', handler); }
+      if (!popup.contains(e.target)) { popup.remove(); document.removeEventListener('click',handler); }
     });
   }, 50);
 }
@@ -1331,23 +1279,24 @@ function marcarEmAberto(cidx, didx) {
   showToast('🔴 Marcado como Em Aberto');
 }
 
+// ===== MODAL NEGOCIADO =====
 let mediaRecorderGlobal = null;
 let audioChunks = [];
 let audioBlobGlobal = null;
 
 function abrirModalNegociado(cidx, didx) {
   const d = clientes[cidx].debitos[didx];
-  document.getElementById('negCidx').value       = cidx;
-  document.getElementById('negDidx').value       = didx;
+  document.getElementById('negCidx').value            = cidx;
+  document.getElementById('negDidx').value            = didx;
   document.getElementById('negDebtDesc').textContent  = d.desc;
   document.getElementById('negDebtValor').textContent = formatarValor(d.valor);
-  document.getElementById('negObs').value        = d.obsNegociado || '';
+  document.getElementById('negObs').value             = d.obsNegociado || '';
   audioBlobGlobal = null; audioChunks = [];
   document.getElementById('audioPlayback').style.display = 'none';
   document.getElementById('audioPlayback').src   = '';
   document.getElementById('btnIniciarGrav').style.display = '';
   document.getElementById('btnPararGrav').style.display   = 'none';
-  document.getElementById('statusGrav').textContent = d.audioUrl ? '✅ Áudio anterior salvo' : '';
+  document.getElementById('statusGrav').textContent = d.audioUrl ? '✅ Áudio salvo' : '';
   if (d.audioUrl) {
     document.getElementById('audioPlayback').src = d.audioUrl;
     document.getElementById('audioPlayback').style.display = 'block';
@@ -1357,15 +1306,15 @@ function abrirModalNegociado(cidx, didx) {
 
 async function iniciarGravacao() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
     audioChunks  = [];
     mediaRecorderGlobal = new MediaRecorder(stream);
     mediaRecorderGlobal.ondataavailable = e => audioChunks.push(e.data);
     mediaRecorderGlobal.onstop = () => {
-      audioBlobGlobal = new Blob(audioChunks, { type: 'audio/webm' });
-      const url  = URL.createObjectURL(audioBlobGlobal);
+      audioBlobGlobal = new Blob(audioChunks, {type:'audio/webm'});
+      const url = URL.createObjectURL(audioBlobGlobal);
       const audio = document.getElementById('audioPlayback');
-      audio.src  = url;
+      audio.src = url;
       audio.style.display = 'block';
       document.getElementById('statusGrav').textContent = '✅ Gravação concluída';
     };
@@ -1382,7 +1331,7 @@ async function iniciarGravacao() {
 function pararGravacao() {
   if (mediaRecorderGlobal && mediaRecorderGlobal.state !== 'inactive') {
     mediaRecorderGlobal.stop();
-    mediaRecorderGlobal.stream.getTracks().forEach(t => t.stop());
+    mediaRecorderGlobal.stream.getTracks().forEach(t=>t.stop());
   }
   document.getElementById('btnIniciarGrav').style.display = '';
   document.getElementById('btnPararGrav').style.display   = 'none';
@@ -1402,44 +1351,41 @@ function salvarNegociacao() {
     const reader = new FileReader();
     reader.onload = () => {
       d.audioUrl = reader.result;
-      salvarStorage();
-      renderClientes();
+      salvarStorage(); renderClientes();
     };
     reader.readAsDataURL(audioBlobGlobal);
   } else {
-    salvarStorage();
-    renderClientes();
+    salvarStorage(); renderClientes();
   }
   document.getElementById('modalNegociadoOverlay').classList.remove('open');
   showToast('🤝 Negociação registrada!');
 }
 
+// ===== MODAL PARCIAL =====
 let metodoParSelecionado = null;
 
 function abrirModalParcial(cidx, didx) {
   const d = clientes[cidx].debitos[didx];
-  document.getElementById('parCidx').value       = cidx;
-  document.getElementById('parDidx').value       = didx;
-  document.getElementById('parValorPago').value  = '';
-  document.getElementById('parPreview').style.display = 'none';
+  document.getElementById('parCidx').value      = cidx;
+  document.getElementById('parDidx').value      = didx;
+  document.getElementById('parValorPago').value = '';  document.getElementById('parPreview').style.display = 'none';
   metodoParSelecionado = null;
-  document.querySelectorAll('#modalParcialOverlay .pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
-  if (!d.pagamentos)   d.pagamentos   = [];
+  document.querySelectorAll('#modalParcialOverlay .pay-method-btn:not(.disabled)').forEach(b=>b.classList.remove('selected'));
+  if (!d.pagamentos)    d.pagamentos    = [];
   if (!d.valorOriginal) d.valorOriginal = d.valor;
-  const totalPago  = d.pagamentos.reduce((s,p) => s + p.valor, 0);
-  const restante   = d.valorOriginal - totalPago;
+  const totalPago = d.pagamentos.reduce((s,p)=>s+p.valor,0);
+  const restante  = d.valorOriginal - totalPago;
   document.getElementById('parValorTotal').textContent    = formatarValor(d.valorOriginal);
   document.getElementById('parValorRestante').textContent = formatarValor(restante);
   const hist = document.getElementById('parHistorico');
   if (d.pagamentos.length === 0) {
     hist.innerHTML = '<p style="color:var(--muted);font-size:13px">Nenhum pagamento registrado.</p>';
   } else {
-    hist.innerHTML = d.pagamentos.map(p => `
+    hist.innerHTML = d.pagamentos.map(p=>`
       <div class="historico-item">
-        <span>${p.forma ? p.forma.toUpperCase() : 'PIX'} · <span class="historico-data">${p.data}</span></span>
+        <span>${p.forma?p.forma.toUpperCase():'PIX'} · <span class="historico-data">${p.data}</span></span>
         <span class="historico-val">${formatarValor(p.valor)}</span>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
   document.getElementById('modalParcialOverlay').classList.add('open');
 }
@@ -1447,15 +1393,15 @@ function abrirModalParcial(cidx, didx) {
 function calcularRestante() {
   const cidx = parseInt(document.getElementById('parCidx').value);
   const didx = parseInt(document.getElementById('parDidx').value);
-  if (isNaN(cidx) || isNaN(didx)) return;
-  const d          = clientes[cidx].debitos[didx];
-  const totalPago  = (d.pagamentos||[]).reduce((s,p) => s + p.valor, 0);
-  const restante   = (d.valorOriginal||d.valor) - totalPago;
-  const agora      = parseFloat(document.getElementById('parValorPago').value) || 0;
-  const preview    = document.getElementById('parPreview');
+  if (isNaN(cidx)||isNaN(didx)) return;
+  const d        = clientes[cidx].debitos[didx];
+  const totalPago = (d.pagamentos||[]).reduce((s,p)=>s+p.valor,0);
+  const restante  = (d.valorOriginal||d.valor) - totalPago;
+  const agora     = parseFloat(document.getElementById('parValorPago').value)||0;
+  const preview   = document.getElementById('parPreview');
   if (agora > 0) {
     preview.style.display = 'block';
-    preview.innerHTML = `💡 Pagando <strong>${formatarValor(agora)}</strong> → Restará <strong>${formatarValor(Math.max(0, restante - agora))}</strong>`;
+    preview.innerHTML = `💡 Pagando <strong>${formatarValor(agora)}</strong> → Restará <strong>${formatarValor(Math.max(0,restante-agora))}</strong>`;
   } else {
     preview.style.display = 'none';
   }
@@ -1463,23 +1409,23 @@ function calcularRestante() {
 
 function selecionarMetodoParcial(metodo) {
   metodoParSelecionado = metodo;
-  document.querySelectorAll('#modalParcialOverlay .pay-method-btn:not(.disabled)').forEach(b => b.classList.remove('selected'));
-  document.getElementById('parPay' + metodo.charAt(0).toUpperCase() + metodo.slice(1)).classList.add('selected');
+  document.querySelectorAll('#modalParcialOverlay .pay-method-btn:not(.disabled)').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('parPayPix').classList.add('selected');
 }
 
 function confirmarParcial() {
   const cidx  = parseInt(document.getElementById('parCidx').value);
   const didx  = parseInt(document.getElementById('parDidx').value);
   const valor = parseFloat(document.getElementById('parValorPago').value);
-  if (!valor || valor <= 0)  { showToast('⚠️ Informe o valor pago!');           return; }
+  if (!valor||valor<=0)      { showToast('⚠️ Informe o valor pago!');           return; }
   if (!metodoParSelecionado) { showToast('⚠️ Selecione a forma de pagamento!'); return; }
   const d = clientes[cidx].debitos[didx];
   if (!d.pagamentos)    d.pagamentos    = [];
   if (!d.valorOriginal) d.valorOriginal = d.valor;
-  const totalPagoAntes = d.pagamentos.reduce((s,p) => s + p.valor, 0);
+  const totalPagoAntes = d.pagamentos.reduce((s,p)=>s+p.valor,0);
   const restanteAntes  = d.valorOriginal - totalPagoAntes;
   if (valor > restanteAntes) {
-    showToast('⚠️ Valor maior que o restante (' + formatarValor(restanteAntes) + ')!');
+    showToast('⚠️ Valor maior que o restante ('+formatarValor(restanteAntes)+')!');
     return;
   }
   d.pagamentos.push({
@@ -1487,31 +1433,234 @@ function confirmarParcial() {
     data:  new Date().toLocaleDateString('pt-BR'),
     forma: metodoParSelecionado
   });
-  const novoRestante = d.valorOriginal - d.pagamentos.reduce((s,p) => s + p.valor, 0);
+  const novoRestante = d.valorOriginal - d.pagamentos.reduce((s,p)=>s+p.valor,0);
   if (novoRestante <= 0) {
     d.pago  = true;
     d.valor = d.valorOriginal;
+    // Registra no histórico
+    historicoPagamentos.unshift({
+      nome:  clientes[cidx].nome,
+      desc:  d.desc + ' (Parcial - Quitado)',
+      valor: d.valorOriginal,
+      forma: metodoParSelecionado,
+      data:  new Date().toLocaleDateString('pt-BR'),
+      hora:  new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    });
     showToast('✅ Débito totalmente quitado!');
   } else {
     d.pago  = false;
     d.valor = novoRestante;
-    showToast(`🟠 Parcial registrado! Restam ${formatarValor(novoRestante)}`);
+    // Registra no histórico
+    historicoPagamentos.unshift({
+      nome:  clientes[cidx].nome,
+      desc:  d.desc + ' (Parcial)',
+      valor: valor,
+      forma: metodoParSelecionado,
+      data:  new Date().toLocaleDateString('pt-BR'),
+      hora:  new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    });
+    showToast(`🟠 Parcial! Restam ${formatarValor(novoRestante)}`);
   }
   salvarStorage();
   renderClientes();
   document.getElementById('modalParcialOverlay').classList.remove('open');
 }
 
-function fecharOverlay(e, id) {
-  if (e.target === document.getElementById(id)) {
-    document.getElementById(id).classList.remove('open');
+// ===== RESUMO =====
+function renderResumo() {
+  let totalPend=0, totalPago=0, totalNeg=0, debitosAbertos=0;
+  clientes.forEach(c => {
+    c.debitos.forEach(d => {
+      if (d.pago)           { totalPago += d.valorNegociado||d.valor; }
+      else if (d.negociado) { totalNeg  += d.valorNegociado||d.valor; debitosAbertos++; }
+      else                  { totalPend += d.valor; debitosAbertos++; }
+    });
+  });
+  document.getElementById('sumPendente').textContent  = formatarValor(totalPend);
+  document.getElementById('sumPago').textContent      = formatarValor(totalPago);
+  document.getElementById('sumNegociado').textContent = formatarValor(totalNeg);
+  document.getElementById('sumClientes').textContent  = clientes.length;
+  document.getElementById('sumDebitos').textContent   = debitosAbertos;
+  const hoje = new Date();
+  const em7  = new Date(); em7.setDate(hoje.getDate()+7);
+  let vencHtml = '';
+  clientes.forEach(c => {
+    c.debitos.forEach(d => {
+      if (!d.pago && d.data) {
+        const venc = new Date(d.data+'T00:00:00');
+        if (venc >= hoje && venc <= em7) {
+          vencHtml += `
+            <div class="debt-item" style="margin-bottom:8px">
+              <div class="debt-icon">⚠️</div>
+              <div class="debt-info">
+                <div class="debt-desc">${c.nome} · ${d.desc}</div>
+                <div class="debt-date">${formatarData(d.data)}</div>
+              </div>
+              <div class="debt-valor pendente">${formatarValor(d.valor)}</div>
+            </div>`;
+        }
+      }
+    });
+  });
+  document.getElementById('vencendoContent').innerHTML = vencHtml ||
+    '<p style="color:var(--muted);font-size:13px">Nenhum débito vencendo nos próximos 7 dias.</p>';
+}
+
+// ===== HISTÓRICO =====
+let histTab = 'cobranca';
+
+function switchHistorico(tab) {
+  histTab = tab;
+  document.getElementById('histCobrancaList').style.display  = tab==='cobranca'  ? 'block' : 'none';
+  document.getElementById('histPagamentoList').style.display = tab==='pagamento' ? 'block' : 'none';
+  document.getElementById('btnHistCobranca').className  = tab==='cobranca'  ? 'btn btn-primary'   : 'btn btn-secondary';
+  document.getElementById('btnHistPagamento').className = tab==='pagamento' ? 'btn btn-primary'   : 'btn btn-secondary';
+  document.getElementById('btnHistCobranca').style.flex  = '1';
+  document.getElementById('btnHistPagamento').style.flex = '1';
+  document.getElementById('btnHistCobranca').style.fontSize  = '12px';
+  document.getElementById('btnHistPagamento').style.fontSize = '12px';
+  renderHistorico();
+}
+
+function renderHistorico() {
+  // Cobranças
+  const cobList = document.getElementById('histCobrancaList');
+  if (historicoCobrancas.length === 0) {
+    cobList.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 20px;font-size:14px;">📭 Nenhuma cobrança enviada ainda.</div>';
+  } else {
+    cobList.innerHTML = historicoCobrancas.map((h,i) => `
+      <div class="hist-card">
+        <div class="hist-card-header">
+          <div>
+            <div class="hist-card-nome">👤 ${h.nome}</div>
+            <div class="hist-card-desc">📞 ${h.tel}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="hist-card-data">${h.data} ${h.hora}</div>
+            <span style="font-size:10px;background:#1a2e1a;color:#22c55e;padding:2px 8px;border-radius:10px;font-weight:700;">ENVIADO</span>
+          </div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:10px;font-size:12px;color:var(--muted);margin-top:8px;max-height:80px;overflow:hidden;cursor:pointer;" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'80px':'none'">
+          ${h.msg.replace(/\n/g,'<br>')}
+        </div>
+        <button class="btn btn-danger btn-small" style="margin-top:8px;width:100%;" onclick="deletarHistCobranca(${i})">🗑 Remover</button>
+      </div>`).join('');
+  }
+
+  // Pagamentos
+  const pagList = document.getElementById('histPagamentoList');
+  if (historicoPagamentos.length === 0) {
+    pagList.innerHTML = '<div style="text-align:center;color:var(--muted);padding:40px 20px;font-size:14px;">💸 Nenhum pagamento registrado ainda.</div>';
+  } else {
+    pagList.innerHTML = historicoPagamentos.map((h,i) => `
+      <div class="hist-card">
+        <div class="hist-card-header">
+          <div>
+            <div class="hist-card-nome">👤 ${h.nome}</div>
+            <div class="hist-card-desc">📋 ${h.desc}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="hist-card-valor" style="color:#22c55e;">${formatarValor(h.valor)}</div>
+            <div class="hist-card-data">${h.data} ${h.hora}</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+          <span style="font-size:11px;background:#052e16;color:#22c55e;padding:3px 10px;border-radius:10px;font-weight:700;">
+            ${h.forma ? h.forma.toUpperCase() : 'PIX'} ✅
+          </span>
+          <button class="btn btn-danger btn-small" onclick="deletarHistPagamento(${i})">🗑</button>
+        </div>
+      </div>`).join('');
   }
 }
 
+function deletarHistCobranca(i) {
+  if (!confirm('Remover este registro?')) return;
+  historicoCobrancas.splice(i,1);
+  salvarStorage();
+  renderHistorico();
+  showToast('🗑 Removido!');
+}
+
+function deletarHistPagamento(i) {
+  if (!confirm('Remover este registro?')) return;
+  historicoPagamentos.splice(i,1);
+  salvarStorage();
+  renderHistorico();
+  showToast('🗑 Removido!');
+}
+
+// ===== UTILITÁRIOS =====
+function atualizarHeaderTotal() {
+  let total = 0;
+  clientes.forEach(c => c.debitos.forEach(d => {
+    if (!d.pago) total += d.valorNegociado||d.valor;
+  }));
+  document.getElementById('headerTotal').textContent = formatarValor(total);
+}
+
+function formatarValor(v) {
+  return 'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+}
+function formatarData(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
 function fecharOverlay(e, id) {
-  if (e.target === document.getElementById(id)) {
+  if (e.target === document.getElementById(id))
     document.getElementById(id).classList.remove('open');
+}
+
+function cadastrarPorVoz() {
+  if (!('SpeechRecognition' in window||'webkitSpeechRecognition' in window)) {
+    showToast('❌ Voz não suportada'); return;
   }
+  const rec = new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+  rec.lang = 'pt-BR';
+  rec.start();
+  showToast('🎤 Fale agora...');
+  rec.onresult = function(e) {
+    const texto  = e.results[0][0].transcript.toLowerCase();
+    const partes = texto.split(' ');
+    document.getElementById('nome').value     = partes[1]||'';
+    document.getElementById('telefone').value = partes[3]||'';
+    document.getElementById('valor').value    = partes[5]||'';
+    showToast('✅ Dados capturados!');
+  };
+}
+
+function buscarContato() {
+  if (!('contacts' in navigator)) {
+    showToast('❌ Não suportado neste navegador'); return;
+  }
+  navigator.contacts.select(['name','tel'],{multiple:false}).then(contacts => {
+    if (contacts && contacts.length > 0) {
+      const c = contacts[0];
+      if (c.name && c.name.length > 0)
+        document.getElementById('nome').value = c.name[0];
+      if (c.tel && c.tel.length > 0) {
+        let tel = c.tel[0].replace(/\D/g,'');
+        if (tel.startsWith('55')) tel = tel.substring(2);
+        document.getElementById('telefone').value = tel;
+      }
+      showToast('✅ Contato importado!');
+    }
+  }).catch(err => {
+    showToast(err.message.includes('denied') ? '❌ Permissão negada.' : '❌ Erro ao buscar contato.');
+  });
+}
+
+function listar() {
+  renderClientes();
+  renderResumo();
 }
 
 setTimeout(() => {
@@ -1520,9 +1669,6 @@ setTimeout(() => {
     mostrarLogin('Erro de conexão. Tente novamente.');
   }
 }, 5000);
-
 </script>
 </body>
 </html>
-
-
