@@ -764,8 +764,20 @@ async function ativar() {
 }
 
 async function sair() {
-  await auth.signOut();
-  showToast('👋 Até logo!');
+  try {
+    await auth.signOut();
+    showToast('👋 Até logo!');
+    setTimeout(() => {
+      document.getElementById('appContainer').classList.remove('active');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginSenha').value = '';
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('loginError').classList.remove('show');
+    }, 500);
+  } catch(e) {
+    showToast('❌ Erro ao sair. Tente novamente.');
+  }
 }
 
 document.getElementById('activationCode').addEventListener('input', function(e) {
