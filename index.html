@@ -2736,11 +2736,24 @@ function almHoje() {
 // ── Disparar alarme ──────────────────────────
 
 function almDisparar(atrasados, manual = false) {
-  if (almCfg.som)        almTocarSom(almCfg.tipoSom, almCfg.volume);
-  if (almCfg.vibracao)   almVibrar();
-  if (almCfg.notificacao) almNotificar(atrasados);
+  // Som
+  if (almCfg.som) almTocarSom(almCfg.tipoSom, almCfg.volume);
+
+  // Vibração
+  if (almCfg.vibracao) almVibrar();
+
+  // Notificação via SW (funciona em segundo plano)
+  if (almCfg.notificacao) {
+    almNotificarViaSW(atrasados);
+  }
+
+  // Banner visual na tela
   almExibirBanner(atrasados);
+
+  // Registra no histórico
   almRegistrarHistorico(atrasados, manual);
+
+  // Atualiza aba
   almAtualizarAba();
 }
 
@@ -3366,18 +3379,76 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ── Inicialização ────────────────────────────
+// ── Registra Service Worker ──────────────────
+async function registrarSW() {
+  if (!('serviceWorker' in navigator)) {
+    console.log('SW não suportado');
+    return;
+  }
+  try {
+    const reg = await navigator.serviceWorker.register('./sw.js');
+    console.log('✅ SW registrado:', reg.scope);
 
+    // Escuta mensagens do SW
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data?.tipo === 'VERIFICAR_ALARME') {
+        almVerificar();
+      }
+    });
+
+  } catch(e) {
+    console.error('❌ SW erro:', e);
+  }
+}
+
+// ── Envia notificação via SW ─────────────────
+async function almNotificarViaSW(atrasados) {
+  if (!('serviceWorker' in navigator)) return;
+
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) return;
+
+  const nomes = atrasados.map(c => c.nome);
+  const qtd   = atrasados.length;
+
+  // Envia mensagem para o SW mostrar notificação
+  if (reg.active) {
+    reg.active.postMessage({
+      tipo  : 'MOSTRAR_NOTIFICACAO',
+      dados : { qtd, nomes }
+    });
+  }
+}
+
+// ── Solicita permissão de notificação ────────
+async function pedirPermissaoNotificacao() {
+  if (!('Notification' in window)) return false;
+
+  if (Notification.permission === 'granted') return true;
+
+  if (Notification.permission === 'denied') {
+    showToast('❌ Notificações bloqueadas no navegador');
+    return false;
+  }
+
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+  
 function almInit() {
-  // 1. Carrega configurações salvas
+  // 1. Registra SW
+  registrarSW();
+
+  // 2. Carrega configurações salvas
   almCarregar();
 
-  // 2. Aplica na interface
+  // 3. Aplica na interface
   almAplicarInterface();
 
-  // 3. Inicia motor de verificação
+  // 4. Inicia motor de verificação
   almIniciar();
 
-  // 4. Atualiza badge inicial
+  // 5. Atualiza badge inicial
   almAtualizarBadge();
 
   console.log('🔔 Sistema de alarmes iniciado!');
