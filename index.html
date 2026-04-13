@@ -156,6 +156,412 @@
   .hist-card-data { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
   .hist-card-desc { font-size: 12px; color: var(--muted); }
   .hist-card-valor { font-size: 15px; font-weight: 700; font-family: 'DM Mono', monospace; }
+  /* ============================================
+     SISTEMA DE ALARMES — NOVO (não altera nada)
+     ============================================ */
+
+  /* Badge no header */
+  .badge-alarme-wrap {
+    position: relative;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+  }
+  .badge-alarme-wrap:hover { background: rgba(239,68,68,0.1); }
+
+  .badge-alarme-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+    color: #5a5a5a;
+    transition: all 0.3s;
+  }
+  .badge-alarme-icon.ativo {
+    color: #ef4444;
+    animation: alm-pulse-icon 2s infinite;
+  }
+  @keyframes alm-pulse-icon {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
+  }
+
+  .badge-alarme-num {
+    position: absolute;
+    top: 0; right: 0;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 50%;
+    width: 17px; height: 17px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: alm-pulse-badge 1.5s infinite;
+  }
+  @keyframes alm-pulse-badge {
+    0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); }
+    50%      { box-shadow: 0 0 0 5px rgba(239,68,68,0); }
+  }
+
+  /* Badge na aba */
+  .alm-tab-badge {
+    background: #ef4444;
+    color: #fff;
+    border-radius: 10px;
+    padding: 1px 5px;
+    font-size: 0.58rem;
+    font-weight: 700;
+    display: none;
+    margin-left: 2px;
+  }
+
+  /* Banner de alarme */
+  #alm-banner {
+    display: none;
+    position: fixed;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 93%;
+    max-width: 560px;
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+    border: 2px solid #ef4444;
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 40px rgba(239,68,68,0.55);
+  }
+  #alm-banner.aberto {
+    display: block;
+    animation: alm-slide-down 0.4s ease, alm-glow 2s infinite 0.4s;
+  }
+  @keyframes alm-slide-down {
+    from { top: -130px; opacity: 0; }
+    to   { top: 72px;   opacity: 1; }
+  }
+  @keyframes alm-glow {
+    0%,100% { box-shadow: 0 8px 40px rgba(239,68,68,0.55); }
+    50%      { box-shadow: 0 8px 60px rgba(239,68,68,0.9);  }
+  }
+  .alm-banner-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .alm-banner-titulo {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: #fca5a5;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .alm-sino { display: inline-block; animation: alm-shake 0.6s infinite; }
+  @keyframes alm-shake {
+    0%,100% { transform: rotate(0deg);   }
+    25%      { transform: rotate(-18deg); }
+    75%      { transform: rotate(18deg);  }
+  }
+  .alm-banner-fechar {
+    background: rgba(255,255,255,0.15);
+    border: none; color: #fff;
+    width: 27px; height: 27px;
+    border-radius: 50%; cursor: pointer;
+    font-size: 0.95rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .alm-banner-fechar:hover { background: rgba(255,255,255,0.28); }
+
+  .alm-banner-sub {
+    font-size: 0.75rem;
+    color: #fca5a5;
+    opacity: 0.85;
+    margin-bottom: 10px;
+  }
+  .alm-banner-lista {
+    max-height: 170px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  .alm-banner-lista::-webkit-scrollbar { width: 3px; }
+  .alm-banner-lista::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 2px; }
+
+  .alm-banner-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 11px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    margin-bottom: 5px;
+  }
+  .alm-banner-nome  { font-size: 0.85rem; color: #fef2f2; font-weight: 600; }
+  .alm-banner-valor { font-size: 0.73rem; color: #fca5a5; opacity: 0.85; }
+  .alm-banner-dias  {
+    font-size: 0.73rem; color: #fca5a5;
+    background: rgba(239,68,68,0.35);
+    padding: 2px 8px; border-radius: 10px;
+    font-weight: 700; white-space: nowrap;
+  }
+  .alm-banner-acoes { display: flex; gap: 7px; flex-wrap: wrap; }
+
+  /* Aba Alarmes */
+  #sec-alarmes { padding-bottom: 20px; }
+
+  .alm-status-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .alm-status-left { display: flex; align-items: center; gap: 10px; }
+  .alm-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: #374151;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .alm-dot.verde {
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34,197,94,0.6);
+    animation: alm-dot-pulse 2s infinite;
+  }
+  .alm-dot.vermelho {
+    background: #ef4444;
+    box-shadow: 0 0 8px rgba(239,68,68,0.6);
+    animation: alm-dot-pulse 1s infinite;
+  }
+  .alm-dot.amarelo {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245,158,11,0.6);
+  }
+  @keyframes alm-dot-pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+  .alm-status-txt  { font-size: 0.87rem; font-weight: 600; color: var(--text); }
+  .alm-status-sub  { font-size: 0.71rem; color: var(--muted); margin-top: 2px; }
+
+  .alm-proximo-box {
+    background: #2a1f08;
+    border: 1px solid #3d2e0a;
+    border-radius: 12px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 14px;
+  }
+  .alm-proximo-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .alm-proximo-txt  { font-size: 0.84rem; color: var(--accent); font-weight: 500; }
+  .alm-proximo-sub  { font-size: 0.71rem; color: var(--muted); margin-top: 2px; }
+
+  /* Toggle rows */
+  .alm-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 15px;
+    background: var(--surface2);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .alm-toggle-row:hover { border-color: var(--accent); }
+  .alm-toggle-left { display: flex; align-items: center; gap: 10px; }
+  .alm-toggle-icon { font-size: 1.15rem; width: 26px; text-align: center; }
+  .alm-toggle-lbl  { font-size: 0.86rem; font-weight: 600; color: var(--text); }
+  .alm-toggle-desc { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+  .alm-switch { position: relative; width: 46px; height: 24px; flex-shrink: 0; }
+  .alm-switch input { opacity: 0; width: 0; height: 0; }
+  .alm-switch-sl {
+    position: absolute; cursor: pointer; inset: 0;
+    background: #374151; border-radius: 24px; transition: 0.3s;
+  }
+  .alm-switch-sl:before {
+    position: absolute; content: "";
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%; transition: 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .alm-switch input:checked + .alm-switch-sl { background: var(--accent); }
+  .alm-switch input:checked + .alm-switch-sl:before { transform: translateX(22px); }
+
+  /* Dias da semana */
+  .alm-dias-grid { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 4px; }
+  .alm-dia-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 0.7rem; font-weight: 700;
+    cursor: pointer; transition: all 0.22s;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+  }
+  .alm-dia-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .alm-dia-btn.sel {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    box-shadow: 0 0 10px rgba(201,168,76,0.4);
+  }
+
+  /* Som */
+  .alm-som-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .alm-som-btn {
+    padding: 11px 6px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 0.75rem; font-weight: 700;
+    cursor: pointer; transition: all 0.22s;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 5px;
+    font-family: 'Inter', sans-serif;
+  }
+  .alm-som-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .alm-som-btn.sel {
+    background: var(--green-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .alm-som-icon { font-size: 1.3rem; }
+
+  /* Volume */
+  .alm-vol-row { display: flex; align-items: center; gap: 11px; }
+  .alm-vol-icon { font-size: 1rem; color: var(--muted); width: 20px; text-align: center; }
+  .alm-vol-slider {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 2px;
+    background: #374151; outline: none; cursor: pointer;
+  }
+  .alm-vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--accent); cursor: pointer;
+    box-shadow: 0 0 5px rgba(201,168,76,0.5);
+    transition: transform 0.2s;
+  }
+  .alm-vol-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .alm-vol-val { font-size: 0.8rem; color: var(--accent); font-weight: 700; width: 36px; text-align: right; }
+
+  /* Threshold */
+  .alm-thresh-grid { display: flex; gap: 7px; flex-wrap: wrap; }
+  .alm-thresh-btn {
+    padding: 7px 14px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    border-radius: 20px;
+    color: var(--muted);
+    font-size: 0.75rem; font-weight: 700;
+    cursor: pointer; transition: all 0.22s;
+    font-family: 'Inter', sans-serif;
+  }
+  .alm-thresh-btn:hover { border-color: #ef4444; color: #ef4444; }
+  .alm-thresh-btn.sel {
+    background: rgba(239,68,68,0.15);
+    border-color: #ef4444;
+    color: #fca5a5;
+  }
+
+  /* Card cliente em atraso */
+  .alm-cli-card {
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-left: 3px solid #ef4444;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .alm-cli-nome   { font-size: 0.88rem; font-weight: 700; color: #fef2f2; }
+  .alm-cli-det    { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+  .alm-cli-dias   {
+    font-size: 0.8rem; font-weight: 700;
+    color: #ef4444;
+    background: rgba(239,68,68,0.15);
+    padding: 3px 11px; border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* Histórico de disparos */
+  .alm-hist-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 13px;
+    background: var(--surface2);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .alm-hist-left  { display: flex; align-items: center; gap: 9px; }
+  .alm-hist-txt   { font-size: 0.81rem; color: var(--text); }
+  .alm-hist-sub   { font-size: 0.69rem; color: var(--muted); margin-top: 2px; }
+  .alm-hist-badge {
+    font-size: 0.7rem; color: #ef4444;
+    background: rgba(239,68,68,0.12);
+    padding: 2px 8px; border-radius: 10px;
+    font-weight: 700;
+  }
+
+  /* Seção título */
+  .alm-sec-titulo {
+    font-size: 0.69rem; font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 9px; margin-top: 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .alm-sec-titulo::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+  }
+
+  /* Teste de som */
+  .alm-teste-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    background: var(--surface2);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .alm-teste-row span { font-size: 0.81rem; color: var(--muted); flex: 1; }
+
+  /* Responsivo */
+  @media (max-width: 400px) {
+    .alm-dia-btn  { width: 36px; height: 36px; font-size: 0.62rem; }
+    .alm-som-grid { gap: 6px; }
+    .alm-banner-acoes { flex-direction: column; }
+    .alm-banner-acoes .btn { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
@@ -225,6 +631,13 @@
       <div class="total" id="headerTotal">R$ 0,00</div>
       <div class="label">A RECEBER</div>
     </div>
+        <!-- BADGE ALARME — NOVO -->
+    <div class="badge-alarme-wrap"
+         onclick="almIrParaAba()"
+         title="Clientes em atraso">
+      <span class="badge-alarme-icon" id="almBadgeIcon">🔔</span>
+      <span class="badge-alarme-num"  id="almBadgeNum">0</span>
+    </div>
     <button onclick="sair()" style="background:none;border:1px solid #242424;color:#5a5a5a;font-size:11px;padding:6px 12px;cursor:pointer;font-family:inherit;margin-left:8px;border-radius:4px;">Sair</button>
   </div>
   <div class="tabs">
@@ -234,6 +647,9 @@
     <div class="tab" onclick="showTab('historico',this)">📋 Histórico</div>
     <div class="tab" onclick="showTab('config',this)">⚙️ Config</div>
   </div>
+      <div class="tab" onclick="showTab('alarmes',this)" id="tab-alarmes">
+      🔔 Alarmes<span class="alm-tab-badge" id="almTabBadge">0</span>
+    </div>
   <div class="content">
     <div class="section active" id="sec-novo">
       <div class="form-card">
@@ -329,6 +745,214 @@
       <div id="histCobrancaList"></div>
       <div id="histPagamentoList" style="display:none"></div>
     </div>
+        <!-- ABA ALARMES — NOVA -->
+    <div class="section" id="sec-alarmes">
+
+      <!-- Status -->
+      <div class="alm-status-box">
+        <div class="alm-status-left">
+          <div class="alm-dot" id="almDot"></div>
+          <div>
+            <div class="alm-status-txt" id="almStatusTxt">Alarme Desativado</div>
+            <div class="alm-status-sub" id="almStatusSub">Ative para monitorar clientes em atraso</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-small" onclick="almVerificarAgora()">
+          🔍 Verificar Agora
+        </button>
+      </div>
+
+      <!-- Próximo alarme -->
+      <div class="alm-proximo-box">
+        <div class="alm-proximo-icon">⏰</div>
+        <div>
+          <div class="alm-proximo-txt" id="almProximoTxt">Nenhum alarme programado</div>
+          <div class="alm-proximo-sub" id="almProximoSub">Configure os dias e horário abaixo</div>
+        </div>
+      </div>
+
+      <!-- Configurações principais -->
+      <div class="form-card">
+        <div class="form-title">⚙️ Configurações</div>
+
+        <div class="alm-toggle-row" onclick="almToggle('almChkAtivo')">
+          <div class="alm-toggle-left">
+            <div class="alm-toggle-icon">🔔</div>
+            <div>
+              <div class="alm-toggle-lbl">Alarmes Ativos</div>
+              <div class="alm-toggle-desc">Ativar sistema de alarmes automáticos</div>
+            </div>
+          </div>
+          <label class="alm-switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="almChkAtivo"
+                   onchange="almSalvar(); almAtualizarStatus();">
+            <span class="alm-switch-sl"></span>
+          </label>
+        </div>
+
+        <div class="alm-toggle-row" onclick="almToggle('almChkSom')">
+          <div class="alm-toggle-left">
+            <div class="alm-toggle-icon">🔊</div>
+            <div>
+              <div class="alm-toggle-lbl">Som do Alarme</div>
+              <div class="alm-toggle-desc">Reproduzir som ao disparar</div>
+            </div>
+          </div>
+          <label class="alm-switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="almChkSom"
+                   onchange="almSalvar();">
+            <span class="alm-switch-sl"></span>
+          </label>
+        </div>
+
+        <div class="alm-toggle-row" onclick="almToggle('almChkVib')">
+          <div class="alm-toggle-left">
+            <div class="alm-toggle-icon">📳</div>
+            <div>
+              <div class="alm-toggle-lbl">Vibração</div>
+              <div class="alm-toggle-desc">Vibrar dispositivo ao disparar (mobile)</div>
+            </div>
+          </div>
+          <label class="alm-switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="almChkVib"
+                   onchange="almSalvar();">
+            <span class="alm-switch-sl"></span>
+          </label>
+        </div>
+
+        <div class="alm-toggle-row" onclick="almToggle('almChkNotif')">
+          <div class="alm-toggle-left">
+            <div class="alm-toggle-icon">📲</div>
+            <div>
+              <div class="alm-toggle-lbl">Notificações do Navegador</div>
+              <div class="alm-toggle-desc">Notificar mesmo com aba minimizada</div>
+            </div>
+          </div>
+          <label class="alm-switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="almChkNotif"
+                   onchange="almSalvar(); almPedirNotificacao();">
+            <span class="alm-switch-sl"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Tipo de som -->
+      <div class="form-card">
+        <div class="form-title">🎵 Tipo de Som</div>
+        <div class="alm-som-grid">
+          <button class="alm-som-btn sel" id="almSomSino"
+                  onclick="almSelecionarSom('sino')">
+            <span class="alm-som-icon">🔔</span>Sino
+          </button>
+          <button class="alm-som-btn" id="almSomAlerta"
+                  onclick="almSelecionarSom('alerta')">
+            <span class="alm-som-icon">🚨</span>Alerta
+          </button>
+          <button class="alm-som-btn" id="almSomMelodia"
+                  onclick="almSelecionarSom('melodia')">
+            <span class="alm-som-icon">🎵</span>Melodia
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-top:14px;margin-bottom:6px;">
+          <label>Volume</label>
+          <div class="alm-vol-row">
+            <span class="alm-vol-icon" id="almVolIcon">🔊</span>
+            <input type="range" class="alm-vol-slider"
+                   id="almVolume" min="0" max="100" value="70"
+                   oninput="almAtualizarVolume(this.value)">
+            <span class="alm-vol-val" id="almVolVal">70%</span>
+          </div>
+        </div>
+
+        <div class="alm-teste-row">
+          <span>🎧 Testar som selecionado</span>
+          <button class="btn btn-secondary btn-small"
+                  onclick="almTestarSom()">▶️ Testar</button>
+        </div>
+      </div>
+
+      <!-- Agendamento -->
+      <div class="form-card">
+        <div class="form-title">📅 Agendamento</div>
+
+        <div class="alm-sec-titulo">Dias da Semana</div>
+        <div class="alm-dias-grid" style="margin-bottom:16px;">
+          <button class="alm-dia-btn"     data-dia="0" onclick="almToggleDia(0)">Dom</button>
+          <button class="alm-dia-btn sel" data-dia="1" onclick="almToggleDia(1)">Seg</button>
+          <button class="alm-dia-btn"     data-dia="2" onclick="almToggleDia(2)">Ter</button>
+          <button class="alm-dia-btn"     data-dia="3" onclick="almToggleDia(3)">Qua</button>
+          <button class="alm-dia-btn"     data-dia="4" onclick="almToggleDia(4)">Qui</button>
+          <button class="alm-dia-btn sel" data-dia="5" onclick="almToggleDia(5)">Sex</button>
+          <button class="alm-dia-btn"     data-dia="6" onclick="almToggleDia(6)">Sáb</button>
+        </div>
+
+        <div class="form-group">
+          <label>Horário do Alarme</label>
+          <input type="time" id="almHorario" value="09:00"
+                 onchange="almSalvar(); almAtualizarProximo();">
+        </div>
+      </div>
+
+      <!-- Threshold -->
+      <div class="form-card">
+        <div class="form-title">⚠️ Alertar a partir de quantos dias de atraso?</div>
+        <div class="alm-thresh-grid" id="almThreshGrid">
+          <button class="alm-thresh-btn sel" data-dias="1"  onclick="almSelecionarThresh(1)">1+ dia</button>
+          <button class="alm-thresh-btn"     data-dias="3"  onclick="almSelecionarThresh(3)">3+ dias</button>
+          <button class="alm-thresh-btn"     data-dias="5"  onclick="almSelecionarThresh(5)">5+ dias</button>
+          <button class="alm-thresh-btn"     data-dias="7"  onclick="almSelecionarThresh(7)">7+ dias</button>
+          <button class="alm-thresh-btn"     data-dias="15" onclick="almSelecionarThresh(15)">15+ dias</button>
+          <button class="alm-thresh-btn"     data-dias="30" onclick="almSelecionarThresh(30)">30+ dias</button>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label>Personalizado (dias)</label>
+          <input type="number" id="almThreshCustom"
+                 placeholder="Ex: 10" min="1" max="365"
+                 onchange="almThreshCustom(this.value)">
+        </div>
+      </div>
+
+      <!-- Clientes em atraso agora -->
+      <div class="form-card">
+        <div class="form-title" style="color:#ef4444;">
+          🚨 Clientes em Atraso Agora
+          <span id="almContador"
+                style="background:rgba(239,68,68,0.15);                color:#ef4444;padding:2px 10px;
+                border-radius:10px;font-size:0.75rem;
+                margin-left:auto;">0</span>
+        </div>
+        <div id="almListaAtrasados">
+          <div style="text-align:center;color:var(--muted);padding:30px 20px;font-size:13px;">
+            ✅ Nenhum cliente em atraso
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="btn btn-secondary btn-small"
+                  onclick="almAtualizarLista()">
+            🔄 Atualizar Lista
+          </button>
+        </div>
+      </div>
+
+      <!-- Histórico de disparos -->
+      <div class="form-card">
+        <div class="form-title">📜 Histórico de Alarmes</div>
+        <div id="almHistorico">
+          <div style="text-align:center;color:var(--muted);padding:30px 20px;font-size:13px;">
+            📭 Nenhum alarme disparado ainda
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="btn btn-secondary btn-small"
+                  onclick="almLimparHistorico()">
+            🗑️ Limpar Histórico
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <!-- FIM ABA ALARMES -->
     <div class="section" id="sec-config">
       <div class="form-card">
         <div class="form-title">🏢 Dados da Empresa</div>
@@ -613,7 +1237,37 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
+<!-- BANNER ALARME — NOVO -->
+<div id="alm-banner">
+  <div class="alm-banner-head">
+    <div class="alm-banner-titulo">
+      <span class="alm-sino">🔔</span>
+      <span id="almBannerTitulo">Clientes em Atraso!</span>
+    </div>
+    <button class="alm-banner-fechar" onclick="almFecharBanner()">✕</button>
+  </div>
+  <div class="alm-banner-sub" id="almBannerSub">
+    Os seguintes clientes estão com pagamento em atraso:
+  </div>
+  <div class="alm-banner-lista" id="almBannerLista"></div>
+  <div class="alm-banner-acoes">
+    <button class="btn btn-small"
+            style="background:#ef4444;color:#fff;"
+            onclick="almIrParaAba()">
+      ⚙️ Ver Detalhes
+    </button>
+    <button class="btn btn-secondary btn-small"
+            onclick="almFecharBanner()">
+      ✕ Fechar
+    </button>
+    <button class="btn btn-small"
+            style="background:#f59e0b;color:#000;"
+            onclick="almSilenciarHoje()">
+      🔕 Silenciar Hoje
+    </button>
+  </div>
+</div>
+  
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -1920,6 +2574,841 @@ function listar() {
   renderResumo();
 }
 
+  /* ============================================
+   SISTEMA DE ALARMES — NOVO
+   Não altera nenhuma função existente
+   ============================================ */
+
+// ── Configuração padrão ──────────────────────
+let almCfg = {
+  ativo          : false,
+  som            : true,
+  vibracao       : true,
+  notificacao    : false,
+  volume         : 70,
+  tipoSom        : 'sino',
+  dias           : [1, 5],
+  horario        : '09:00',
+  thresholdDias  : 1,
+  silenciadoHoje : null,
+  historico      : []
+};
+
+let almIntervalo      = null;
+let almUltimoMinuto   = null;
+
+// ── Carregar / Salvar ────────────────────────
+
+function almCarregar() {
+  try {
+    const s = localStorage.getItem('cf_alm_cfg');
+    if (s) almCfg = { ...almCfg, ...JSON.parse(s) };
+  } catch(e) { console.error('Alarme cfg erro:', e); }
+}
+
+function almSalvar() {
+  almLerInterface();
+  try {
+    localStorage.setItem('cf_alm_cfg', JSON.stringify(almCfg));
+  } catch(e) { console.error('Alarme salvar erro:', e); }
+  almAtualizarProximo();
+  almAtualizarStatus();
+}
+
+function almLerInterface() {
+  const ids = {
+    ativo      : 'almChkAtivo',
+    som        : 'almChkSom',
+    vibracao   : 'almChkVib',
+    notificacao: 'almChkNotif'
+  };
+  Object.entries(ids).forEach(([k,id]) => {
+    const el = document.getElementById(id);
+    if (el) almCfg[k] = el.checked;
+  });
+  const vol = document.getElementById('almVolume');
+  const hor = document.getElementById('almHorario');
+  if (vol) almCfg.volume  = parseInt(vol.value);
+  if (hor) almCfg.horario = hor.value;
+}
+
+function almAplicarInterface() {
+  // Checkboxes
+  const map = {
+    almChkAtivo : 'ativo',
+    almChkSom   : 'som',
+    almChkVib   : 'vibracao',
+    almChkNotif : 'notificacao'
+  };
+  Object.entries(map).forEach(([id, k]) => {
+    const el = document.getElementById(id);
+    if (el) el.checked = almCfg[k];
+  });
+
+  // Volume
+  const vol = document.getElementById('almVolume');
+  if (vol) {
+    vol.value = almCfg.volume;
+    almAtualizarVolume(almCfg.volume);
+  }
+
+  // Horário
+  const hor = document.getElementById('almHorario');
+  if (hor) hor.value = almCfg.horario;
+
+  // Dias
+  document.querySelectorAll('.alm-dia-btn').forEach(btn => {
+    const d = parseInt(btn.getAttribute('data-dia'));
+    btn.classList.toggle('sel', almCfg.dias.includes(d));
+  });
+
+  // Som
+  almSelecionarSomSilencioso(almCfg.tipoSom);
+
+  // Threshold
+  almAtualizarBotoesThresh(almCfg.thresholdDias);
+}
+
+// ── Motor principal ──────────────────────────
+
+function almIniciar() {
+  if (almIntervalo) clearInterval(almIntervalo);
+  almVerificar();
+  almIntervalo = setInterval(almVerificar, 60000);
+  console.log('✅ Motor de alarmes iniciado');
+}
+
+function almVerificar() {
+  // Sempre atualiza badge
+  almAtualizarBadge();
+
+  if (!almCfg.ativo) return;
+
+  // Silenciado hoje?
+  if (almCfg.silenciadoHoje === almHoje()) return;
+
+  // Dia e horário corretos?
+  if (!almVerificarDiaHora()) return;
+
+  // Já disparou neste minuto?
+  const min = almMinutoAtual();
+  if (almUltimoMinuto === min) return;
+
+  // Busca atrasados
+  const atrasados = almGetAtrasados();
+  if (atrasados.length === 0) return;
+
+  almUltimoMinuto = min;
+  almDisparar(atrasados);
+}
+
+function almVerificarAgora() {
+  const atrasados = almGetAtrasados();
+  if (atrasados.length === 0) {
+    showToast('✅ Nenhum cliente em atraso!');
+    return;
+  }
+  showToast('🔔 ' + atrasados.length + ' cliente(s) em atraso!');
+  almDisparar(atrasados, true);
+}
+
+function almVerificarDiaHora() {
+  const agora = new Date();
+  const dia   = agora.getDay();
+  const h     = agora.getHours();
+  const m     = agora.getMinutes();
+  if (!almCfg.dias.includes(dia)) return false;
+  const [hc, mc] = almCfg.horario.split(':').map(Number);
+  return h === hc && m === mc;
+}
+
+function almMinutoAtual() {
+  const a = new Date();
+  return a.toISOString().split('T')[0]
+    + ' ' + String(a.getHours()).padStart(2,'0')
+    + ':' + String(a.getMinutes()).padStart(2,'0');
+}
+
+function almHoje() {
+  return new Date().toISOString().split('T')[0];
+}
+
+// ── Disparar alarme ──────────────────────────
+
+function almDisparar(atrasados, manual = false) {
+  if (almCfg.som)        almTocarSom(almCfg.tipoSom, almCfg.volume);
+  if (almCfg.vibracao)   almVibrar();
+  if (almCfg.notificacao) almNotificar(atrasados);
+  almExibirBanner(atrasados);
+  almRegistrarHistorico(atrasados, manual);
+  almAtualizarAba();
+}
+
+// ── Clientes atrasados ───────────────────────
+
+function almGetAtrasados() {
+  const thresh = almCfg.thresholdDias || 1;
+  const mapa   = {};
+
+  clientes.forEach(c => {
+    c.debitos.forEach(d => {
+      if (d.pago) return;
+      const dias = almDiasAtraso(d.data);
+      if (dias < thresh) return;
+
+      if (!mapa[c.nome]) {
+        mapa[c.nome] = {
+          nome      : c.nome,
+          telefone  : c.telefone,
+          totalDivida: 0,
+          maxDias   : 0,
+          debitos   : []
+        };
+      }
+      mapa[c.nome].totalDivida += d.valorNegociado || d.valor;
+      mapa[c.nome].debitos.push(d);
+      if (dias > mapa[c.nome].maxDias) mapa[c.nome].maxDias = dias;
+    });
+  });
+
+  return Object.values(mapa).sort((a,b) => b.maxDias - a.maxDias);
+}
+
+function almDiasAtraso(dataStr) {
+  if (!dataStr) return 0;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const venc = new Date(dataStr + 'T00:00:00');
+  return Math.floor((hoje - venc) / 86400000);
+}
+
+// ── Som ─────────────────────────────────────
+
+function almTocarSom(tipo, volume) {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const gain = ctx.createGain();
+    gain.gain.value = (volume || 70) / 100;
+    gain.connect(ctx.destination);
+    if (tipo === 'sino')    almSomSino(ctx, gain);
+    if (tipo === 'alerta')  almSomAlerta(ctx, gain);
+    if (tipo === 'melodia') almSomMelodia(ctx, gain);
+  } catch(e) { console.error('Som erro:', e); }
+}
+
+function almSomSino(ctx, gain) {
+  [{freq:880,t:0,dur:0.6},{freq:660,t:0.3,dur:0.6},{freq:880,t:0.6,dur:0.8}]
+  .forEach(n => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(gain);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(n.freq, ctx.currentTime + n.t);
+    g.gain.setValueAtTime(0, ctx.currentTime + n.t);
+    g.gain.linearRampToValueAtTime(1, ctx.currentTime + n.t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + n.t + n.dur);
+    o.start(ctx.currentTime + n.t);
+    o.stop(ctx.currentTime + n.t + n.dur);
+  });
+}
+
+function almSomAlerta(ctx, gain) {
+  [0, 0.25, 0.5, 0.75, 1.0].forEach(t => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(gain);
+    o.type = 'square';
+    o.frequency.setValueAtTime(880, ctx.currentTime + t);
+    g.gain.setValueAtTime(0, ctx.currentTime + t);
+    g.gain.linearRampToValueAtTime(0.8, ctx.currentTime + t + 0.02);
+    g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.18);
+    o.start(ctx.currentTime + t);
+    o.stop(ctx.currentTime + t + 0.2);
+  });
+}
+
+function almSomMelodia(ctx, gain) {
+  [{freq:523,t:0.0,dur:0.2},{freq:659,t:0.2,dur:0.2},
+   {freq:784,t:0.4,dur:0.2},{freq:1047,t:0.6,dur:0.2},
+   {freq:784,t:0.8,dur:0.15},{freq:1047,t:0.95,dur:0.4}]
+  .forEach(n => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(gain);
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(n.freq, ctx.currentTime + n.t);
+    g.gain.setValueAtTime(0, ctx.currentTime + n.t);
+    g.gain.linearRampToValueAtTime(0.9, ctx.currentTime + n.t + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + n.t + n.dur);
+    o.start(ctx.currentTime + n.t);
+    o.stop(ctx.currentTime + n.t + n.dur + 0.05);
+  });
+}
+
+function almTestarSom() {
+  const vol = parseInt(document.getElementById('almVolume')?.value || 70);
+  almTocarSom(almCfg.tipoSom, vol);
+  showToast('🎵 Testando: ' + almCfg.tipoSom);
+}
+
+// ── Vibração ─────────────────────────────────
+
+function almVibrar() {
+  if ('vibrate' in navigator) {
+    navigator.vibrate([200 , 100, 200, 100, 400]);
+  }
+}
+
+// ── Notificações ─────────────────────────────
+
+function almPedirNotificacao() {
+  const el = document.getElementById('almChkNotif');
+  if (!el || !el.checked) return;
+
+  if (!('Notification' in window)) {
+    showToast('❌ Navegador não suporta notificações');
+    el.checked = false;
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    showToast('✅ Notificações já permitidas!');
+    return;
+  }
+
+  if (Notification.permission === 'denied') {
+    showToast('❌ Notificações bloqueadas no navegador');
+    el.checked = false;
+    almCfg.notificacao = false;
+    return;
+  }
+
+  Notification.requestPermission().then(p => {
+    if (p === 'granted') {
+      showToast('✅ Notificações ativadas!');
+    } else {
+      showToast('❌ Permissão negada');
+      el.checked = false;
+      almCfg.notificacao = false;
+      almSalvar();
+    }
+  });
+}
+
+function almNotificar(atrasados) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+
+  const titulo = '🔔 Cobrança Fácil — ' + atrasados.length + ' cliente(s) em atraso';
+  const corpo  = atrasados
+    .slice(0, 5)
+    .map(c => '• ' + c.nome + ' (' + c.maxDias + ' dias)')
+    .join('\n');
+
+  try {
+    const n = new Notification(titulo, {
+      body : corpo + (atrasados.length > 5
+        ? '\n+' + (atrasados.length - 5) + ' mais...' : ''),
+      tag  : 'cf-alarme',
+      requireInteraction: true
+    });
+    n.onclick = () => { window.focus(); almIrParaAba(); n.close(); };
+    setTimeout(() => n.close(), 10000);
+  } catch(e) { console.error('Notif erro:', e); }
+}
+
+// ── Banner visual ────────────────────────────
+
+function almExibirBanner(atrasados) {
+  const banner = document.getElementById('alm-banner');
+  const lista  = document.getElementById('almBannerLista');
+  const sub    = document.getElementById('almBannerSub');
+
+  if (!banner || !lista) return;
+
+  if (sub) {
+    sub.textContent = atrasados.length + ' cliente(s) com pagamento em atraso:';
+  }
+
+  lista.innerHTML = atrasados.map(c => `
+    <div class="alm-banner-item">
+      <div>
+        <div class="alm-banner-nome">${c.nome}</div>
+        <div class="alm-banner-valor">
+          R$ ${c.totalDivida.toLocaleString('pt-BR',{minimumFractionDigits:2})}
+        </div>
+      </div>
+      <div class="alm-banner-dias">${c.maxDias}d atraso</div>
+    </div>
+  `).join('');
+
+  banner.classList.add('aberto');
+
+  // Auto-fecha em 30 segundos
+  setTimeout(() => almFecharBanner(), 30000);
+}
+
+function almFecharBanner() {
+  const banner = document.getElementById('alm-banner');
+  if (banner) banner.classList.remove('aberto');
+}
+
+function almSilenciarHoje() {
+  almCfg.silenciadoHoje = almHoje();
+  localStorage.setItem('cf_alm_cfg', JSON.stringify(almCfg));
+  almFecharBanner();
+  almAtualizarStatus();
+  showToast('🔕 Alarme silenciado até amanhã!');
+}
+
+// ── Badge do header ──────────────────────────
+
+function almAtualizarBadge() {
+  const atrasados  = almGetAtrasados();
+  const qtd        = atrasados.length;
+
+  const icon   = document.getElementById('almBadgeIcon');
+  const num    = document.getElementById('almBadgeNum');
+  const tabBdg = document.getElementById('almTabBadge');
+
+  if (icon) {
+    icon.classList.toggle('ativo', qtd > 0);
+    icon.title = qtd > 0
+      ? qtd + ' cliente(s) em atraso'
+      : 'Nenhum cliente em atraso';
+  }
+
+  if (num) {
+    num.style.display   = qtd > 0 ? 'flex' : 'none';
+    num.textContent     = qtd > 99 ? '99+' : qtd;
+  }
+
+  if (tabBdg) {
+    tabBdg.style.display = qtd > 0 ? 'inline' : 'none';
+    tabBdg.textContent   = qtd;
+  }
+}
+
+// ── Histórico ────────────────────────────────
+
+function almRegistrarHistorico(atrasados, manual) {
+  const reg = {
+    id         : Date.now().toString(36),
+    dataHora   : new Date().toISOString(),
+    qtd        : atrasados.length,
+    manual     : manual,
+    clientes   : atrasados.map(c => ({
+      nome    : c.nome,
+      maxDias : c.maxDias
+    }))
+  };
+
+  almCfg.historico.unshift(reg);
+
+  // Mantém só os últimos 50
+  if (almCfg.historico.length > 50) {
+    almCfg.historico = almCfg.historico.slice(0, 50);
+  }
+
+  localStorage.setItem('cf_alm_cfg', JSON.stringify(almCfg));
+}
+
+function almRenderHistorico() {
+  const el = document.getElementById('almHistorico');
+  if (!el) return;
+
+  if (!almCfg.historico || almCfg.historico.length === 0) {
+    el.innerHTML = `
+      <div style="text-align:center;color:var(--muted);
+                  padding:30px 20px;font-size:13px;">
+        📭 Nenhum alarme disparado ainda
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = almCfg.historico.map(r => {
+    const d    = new Date(r.dataHora);
+    const data = d.toLocaleDateString('pt-BR');
+    const hora = d.toLocaleTimeString('pt-BR', {
+      hour: '2-digit', minute: '2-digit'
+    });
+    const icon = r.manual ? '👆' : '⏰';
+    const tipo = r.manual ? 'Manual' : 'Automático';
+
+    const nomes = r.clientes
+      .slice(0, 3)
+      .map(c => c.nome + ' (' + c.maxDias + 'd)')
+      .join(', ')
+      + (r.clientes.length > 3
+          ? ' +' + (r.clientes.length - 3) + ' mais'
+          : '');
+
+    return `
+      <div class="alm-hist-item">
+        <div class="alm-hist-left">
+          <span style="font-size:1rem;">${icon}</span>
+          <div>
+            <div class="alm-hist-txt">
+              ${data} às ${hora}
+              <span style="font-size:0.69rem;
+                           color:var(--muted);
+                           margin-left:5px;">${tipo}</span>
+            </div>
+            <div class="alm-hist-sub">${nomes}</div>
+          </div>
+        </div>
+        <span class="alm-hist-badge">${r.qtd} cliente(s)</span>
+      </div>`;
+  }).join('');
+}
+
+function almLimparHistorico() {
+  if (!confirm('Limpar todo o histórico de alarmes?')) return;
+  almCfg.historico = [];
+  localStorage.setItem('cf_alm_cfg', JSON.stringify(almCfg));
+  almRenderHistorico();
+  showToast('🗑️ Histórico limpo!');
+}
+
+// ── Próximo alarme ───────────────────────────
+
+function almAtualizarProximo() {
+  const elTxt = document.getElementById('almProximoTxt');
+  const elSub = document.getElementById('almProximoSub');
+  if (!elTxt || !elSub) return;
+
+  if (!almCfg.ativo) {
+    elTxt.textContent = 'Alarme desativado';
+    elSub.textContent = 'Ative o alarme para ver o próximo disparo';
+    return;
+  }
+
+  if (!almCfg.dias || almCfg.dias.length === 0) {
+    elTxt.textContent = 'Nenhum dia selecionado';
+    elSub.textContent = 'Selecione pelo menos um dia da semana';
+    return;
+  }
+
+  const proximo = almCalcularProximo();
+  if (!proximo) {
+    elTxt.textContent = 'Não foi possível calcular';
+    elSub.textContent = 'Verifique as configurações';
+    return;
+  }
+
+  const agora    = new Date();
+  const diffMs   = proximo - agora;
+  const diffH    = Math.floor(diffMs / 3600000);
+  const diffM    = Math.floor((diffMs % 3600000) / 60000);
+
+  const dataFmt  = proximo.toLocaleDateString('pt-BR', {
+    weekday: 'long', day: '2-digit', month: '2-digit'
+  });
+
+  elTxt.textContent = '⏰ ' + dataFmt + ' às ' + almCfg.horario;
+
+  if (diffH < 1) {
+    elSub.textContent = 'Em aproximadamente ' + diffM + ' minuto(s)';
+  } else if (diffH < 24) {
+    elSub.textContent = 'Em ' + diffH + 'h ' + diffM + 'min';
+  } else {
+    const dias = Math.floor(diffH / 24);
+    elSub.textContent = 'Em ' + dias + ' dia(s) e ' + (diffH % 24) + 'h';
+  }
+}
+
+function almCalcularProximo() {
+  if (!almCfg.dias || almCfg.dias.length === 0) return null;
+  const agora        = new Date();
+  const [hora, min]  = almCfg.horario.split(':').map(Number);
+
+  for (let i = 0; i <= 7; i++) {
+    const t = new Date(agora);
+    t.setDate(agora.getDate() + i);
+    t.setHours(hora, min, 0, 0);
+    if (i === 0 && t <= agora) continue;
+    if (almCfg.dias.includes(t.getDay())) return t;
+  }
+  return null;
+}
+
+// ── Status do alarme ─────────────────────────
+
+function almAtualizarStatus() {
+  const dot  = document.getElementById('almDot');
+  const txt  = document.getElementById('almStatusTxt');
+  const sub  = document.getElementById('almStatusSub');
+  if (!dot || !txt || !sub) return;
+
+  const atrasados = almGetAtrasados();
+
+  // Silenciado hoje
+  if (almCfg.silenciadoHoje === almHoje()) {
+    dot.className     = 'alm-dot amarelo';
+    txt.textContent   = '🔕 Silenciado Hoje';
+    sub.textContent   = 'O alarme voltará amanhã';
+    return;
+  }
+
+  // Desativado
+  if (!almCfg.ativo) {
+    dot.className     = 'alm-dot';
+    txt.textContent   = 'Alarme Desativado';
+    sub.textContent   = 'Ative para monitorar clientes em atraso';
+    return;
+  }
+
+  // Ativo com atrasos
+  if (atrasados.length > 0) {
+    dot.className     = 'alm-dot vermelho';
+    txt.textContent   = '🚨 ' + atrasados.length + ' cliente(s) em atraso!';
+    sub.textContent   = 'Threshold: ' + almCfg.thresholdDias + '+ dia(s)';
+    return;
+  }
+
+  // Ativo sem atrasos
+  dot.className     = 'alm-dot verde';
+  txt.textContent   = '✅ Alarme Ativo — Tudo em dia!';
+  sub.textContent   = 'Monitorando · Threshold: ' + almCfg.thresholdDias + '+ dia(s)';
+}
+
+// ── Lista de atrasados na aba ────────────────
+
+function almAtualizarLista() {
+  const lista    = document.getElementById('almListaAtrasados');
+  const contador = document.getElementById('almContador');
+  const atrasados = almGetAtrasados();
+
+  if (contador) {
+    contador.textContent    = atrasados.length;
+    contador.style.color    = atrasados.length > 0 ? '#ef4444' : '#22c55e';
+    contador.style.background = atrasados.length > 0
+      ? 'rgba(239,68,68,0.15)'
+      : 'rgba(34,197,94,0.15)';
+  }
+
+  if (!lista) return;
+
+  if (atrasados.length === 0) {
+    lista.innerHTML = `
+      <div style="text-align:center;color:var(--muted);
+                  padding:30px 20px;font-size:13px;">
+        ✅ Nenhum cliente em atraso
+        ${almCfg.thresholdDias > 1
+          ? '(threshold: ' + almCfg.thresholdDias + '+ dias)'
+          : ''}
+      </div>`;
+    return;
+  }
+
+  lista.innerHTML = atrasados.map(c => `
+    <div class="alm-cli-card">
+      <div>
+        <div class="alm-cli-nome">${c.nome}</div>
+        <div class="alm-cli-det">
+          ${c.debitos.length} débito(s) ·
+          R$ ${c.totalDivida.toLocaleString('pt-BR',{minimumFractionDigits:2})}
+        </div>
+      </div>
+      <div class="alm-cli-dias">${c.maxDias}d atraso</div>
+    </div>
+  `).join('');
+}
+
+// ── Atualiza toda a aba ──────────────────────
+
+function almAtualizarAba() {
+  almAtualizarStatus();
+  almAtualizarProximo();
+  almAtualizarLista();
+  almRenderHistorico();
+}
+
+// ── Controles de interface ───────────────────
+
+function almToggle(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.checked = !el.checked;
+  el.dispatchEvent(new Event('change'));
+}
+
+function almToggleDia(dia) {
+  const idx = almCfg.dias.indexOf(dia);
+  if (idx === -1) {
+    almCfg.dias.push(dia);
+  } else {
+    if (almCfg.dias.length === 1) {
+      showToast('⚠️ Selecione pelo menos um dia!');
+      return;
+    }
+    almCfg.dias.splice(idx, 1);
+  }
+
+  // Atualiza visual do botão
+  const btn = document.querySelector('.alm-dia-btn[data-dia="' + dia + '"]');
+  if (btn) btn.classList.toggle('sel', almCfg.dias.includes(dia));
+
+  almSalvar();
+}
+
+function almSelecionarSom(tipo) {
+  almCfg.tipoSom = tipo;
+  almSelecionarSomSilencioso(tipo);
+  almSalvar();
+  // Toca preview
+  almTocarSom(tipo, almCfg.volume);
+}
+
+function almSelecionarSomSilencioso(tipo) {
+  almCfg.tipoSom = tipo;
+  document.querySelectorAll('.alm-som-btn').forEach(b => {
+    b.classList.remove('sel');
+  });
+  const el = document.getElementById('almSom' +
+    tipo.charAt(0).toUpperCase() + tipo.slice(1));
+  if (el) el.classList.add('sel');
+}
+
+function almAtualizarVolume(val) {
+  val = parseInt(val);
+  almCfg.volume = val;
+
+  const elVal  = document.getElementById('almVolVal');
+  const elIcon = document.getElementById('almVolIcon');
+  const slider = document.getElementById('almVolume');
+
+  if (elVal)  elVal.textContent  = val + '%';
+  if (elIcon) {
+    if (val === 0)      elIcon.textContent = '🔇';
+    else if (val < 30)  elIcon.textContent = '🔈';
+    else if (val < 70)  elIcon.textContent = '🔉';
+    else                elIcon.textContent = '🔊';
+  }
+
+  // Gradiente no slider
+  if (slider) {
+    slider.style.background =
+      'linear-gradient(to right, #c9a84c ' + val + '%, #374151 ' + val + '%)';
+  }
+}
+
+function almSelecionarThresh(dias) {
+  almCfg.thresholdDias = dias;
+
+  // Limpa campo custom
+  const custom = document.getElementById('almThreshCustom');
+  if (custom) custom.value = '';
+
+  almAtualizarBotoesThresh(dias);
+  almSalvar();
+  almAtualizarLista();
+  almAtualizarStatus();
+
+  showToast('⚠️ Alertando com ' + dias + '+ dia(s) de atraso');
+}
+
+function almThreshCustom(val) {
+  const dias = parseInt(val);
+  if (!dias || dias < 1) return;
+  almCfg.thresholdDias = dias;
+  almAtualizarBotoesThresh(-1); // desmarca todos
+  almSalvar();
+  almAtualizarLista();
+  almAtualizarStatus();
+}
+
+function almAtualizarBotoesThresh(selecionado) {
+  document.querySelectorAll('.alm-thresh-btn').forEach(btn => {
+    const d = parseInt(btn.getAttribute('data-dias'));
+    btn.classList.toggle('sel', d === selecionado);
+  });
+}
+
+// ── Navegação ────────────────────────────────
+
+function almIrParaAba() {
+  // Usa a função showTab existente do sistema
+  const tabEl = document.querySelector('.tab:nth-child(6)');
+  showTab('alarmes', tabEl);
+  almFecharBanner();
+  almAtualizarAba();
+}
+
+// ── Atualização periódica ────────────────────
+
+// Atualiza próximo alarme a cada minuto
+setInterval(function() {
+  const aba = document.getElementById('sec-alarmes');
+  if (aba && aba.classList.contains('active')) {
+    almAtualizarProximo();
+  }
+  // Badge sempre atualizado
+  almAtualizarBadge();
+}, 60000);
+
+// Quando usuário volta para a aba do navegador
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') {
+    almAtualizarBadge();
+    almVerificar();
+  }
+});
+
+// Salva antes de fechar
+window.addEventListener('beforeunload', function() {
+  almLerInterface();
+  localStorage.setItem('cf_alm_cfg', JSON.stringify(almCfg));
+});
+
+// ESC fecha banner
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') almFecharBanner();
+});
+
+// ── Inicialização ────────────────────────────
+
+function almInit() {
+  // 1. Carrega configurações salvas
+  almCarregar();
+
+  // 2. Aplica na interface
+  almAplicarInterface();
+
+  // 3. Inicia motor de verificação
+  almIniciar();
+
+  // 4. Atualiza badge inicial
+  almAtualizarBadge();
+
+  console.log('🔔 Sistema de alarmes iniciado!');
+}
+
+// Aguarda o app estar pronto e inicializa
+// Usa MutationObserver para detectar quando o app fica visível
+const almObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(m) {
+    if (m.target.id === 'appContainer' &&
+        m.target.classList.contains('active')) {
+      setTimeout(almInit, 500);
+      almObserver.disconnect();
+    }
+  });
+});
+
+almObserver.observe(
+  document.getElementById('appContainer'),
+  { attributes: true, attributeFilter: ['class'] }
+);
+
+// Fallback: se já estiver ativo ao carregar
+if (document.getElementById('appContainer')
+    .classList.contains('active')) {
+  setTimeout(almInit, 500);
+}
+
+/* ============================================
+   FIM DO SISTEMA DE ALARMES
+   ============================================ */
 setTimeout(()=>{
   const loading = document.getElementById('loadingScreen');
   if (loading&&!loading.classList.contains('hidden')) {
