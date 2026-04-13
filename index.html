@@ -939,11 +939,6 @@
            PRÓXIMO ALARME INFO — NOVO
            ============================================ */
         .proximo-alarme-box {
-            background: rgba(124,58,
-        /* ============================================
-           PRÓXIMO ALARME INFO — NOVO (continuação)
-           ============================================ */
-        .proximo-alarme-box {
             background: rgba(124,58,237,0.08);
             border: 1px solid rgba(124,58,237,0.25);
             border-radius: 10px;
@@ -1699,7 +1694,8 @@
     <!-- FIM ABA ALARMES -->
 
 </body>
-</html><script>
+</html>
+<script>
 
     /* ============================================
        PARTE 5 — DADOS, CLIENTES E COBRANÇAS
@@ -2114,7 +2110,7 @@
         tbody.innerHTML = ordenadas.map(cob => {
             const status   = getStatusCobranca(cob);
             const dias     = calcularDiasAtraso(cob.vencimento);
-
+            
             // Define estilo da linha conforme status
             let rowStyle = '';
             if (status === 'atrasado')    rowStyle = 'background:rgba(239,68,68,0.05);border-left:2px solid #ef4444;';
@@ -2813,9 +2809,6 @@
      * Calcula e exibe informação do próximo alarme programado
      */
     function atualizarProximoAlarme() {
-        const el    = document.getElementById('proximo-alarme-texto
-
-        // Continuação da função atualizarProximoAlarme()
         const elTexto = document.getElementById('proximo-alarme-texto');
         const elSub   = document.getElementById('proximo-alarme-sub');
 
@@ -3200,10 +3193,7 @@
         if (!banner || !lista) return;
 
         // Monta subtítulo
-        if (subtitulo)
-
-        // Continuação da função exibirBanner()
-        if (subtitulo) {
+        if (subtitulo){
             subtitulo.textContent =
                 `${atrasados.length} cliente(s) com pagamento em atraso:`;
         }
@@ -3603,6 +3593,7 @@
             fecharBanner();
         }
 
+
         // CTRL + 1~5 para trocar abas rapidamente
         if (e.ctrlKey) {
             switch(e.key) {
@@ -3939,3 +3930,4 @@
     });
 
 </script>
+    
