@@ -3391,8 +3391,23 @@ async function registrarSW() {
 
     // Escuta mensagens do SW
     navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data?.tipo === 'VERIFICAR_ALARME') {
+      const tipo = event.data?.tipo;
+
+      if (tipo === 'VERIFICAR_ALARME') {
         almVerificar();
+      }
+
+      // SW avisou para ir para aba de alarmes (clique na notificação)
+      if (tipo === 'IR_PARA_ALARMES') {
+        almIrParaAba();
+      }
+
+      // SW avisou para silenciar hoje (botão na notificação)
+      if (tipo === 'SILENCIAR_HOJE') {
+        almCfg.silenciadoHoje = almHoje();
+        almSalvar();
+        almAtualizarStatus();
+        showToast('🔕 Alarme silenciado para hoje');
       }
     });
 
@@ -3401,6 +3416,46 @@ async function registrarSW() {
   }
 }
 
+// ── Envia notificação via SW ─────────────────
+async function almNotificarViaSW(atrasados) {
+  if (!('serviceWorker' in navigator)) return;
+
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg?.active) return;
+
+  const nomes = atrasados.map(c => c.nome);
+  const qtd   = atrasados.length;
+
+  // Mostra notificação imediata
+  reg.active.postMessage({
+    tipo : 'MOSTRAR_NOTIFICACAO',
+    dados: { qtd, nomes }
+  });
+
+  // Agenda próximo alarme no SW (backup para background)
+  const proximo = almCalcularProximo();
+  if (proximo) {
+    reg.active.postMessage({
+      tipo : 'AGENDAR_ALARME',
+      dados: { timestamp: proximo.getTime(), qtd, nomes }
+    });
+  }
+}
+
+// ── Solicita permissão de notificação ────────
+async function pedirPermissaoNotificacao() {
+  if (!('Notification' in window)) return false;
+
+  if (Notification.permission === 'granted') return true;
+
+  if (Notification.permission === 'denied') {
+    showToast('❌ Notificações bloqueadas no navegador');
+    return false;
+  }
+
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
 // ── Envia notificação via SW ─────────────────
 async function almNotificarViaSW(atrasados) {
   if (!('serviceWorker' in navigator)) return;
