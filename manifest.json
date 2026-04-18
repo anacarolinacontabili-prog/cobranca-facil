@@ -1,48 +1,166 @@
 {
-  "name": "Cobrança Fácil",
-  "short_name": "Cobrança",
-  "description": "Gestão de cobranças · Dominium Recovery",
-  "start_url": "./index.html",
+  "name": "Cobrança Fácil - Gestão de Débitos",
+  "short_name": "Cobrança Fácil",
+  "description": "Sistema profissional para gestão de cobranças e controle de pagamentos com alarmes automáticos e notificações",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "background_color": "#000000",
   "theme_color": "#c9a84c",
+  "categories": ["finance", "business", "productivity"],
   "lang": "pt-BR",
+  "dir": "ltr",
+  
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "categories": ["finance", "business"],
-  "shortcuts": [
+  
+  "screenshots": [
     {
-      "name": "Clientes",
-      "short_name": "Clientes",
-      "description": "Ver clientes",
-      "url": "./index.html#clientes",
-      "icons": [{"src": "icon-192.png", "sizes": "192x192"}]
+      "src": "/screenshot-1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Lista de clientes com débitos"
     },
     {
-      "name": "Alarmes",
-      "short_name": "Alarmes",
-      "description": "Ver alarmes",
-      "url": "./index.html#alarmes",
-      "icons": [{"src": "icon-192.png", "sizes": "192x192"}]
+      "src": "/screenshot-2.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Sistema de alarmes automáticos"
+    },
+    {
+      "src": "/screenshot-3.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard e resumo financeiro"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Novo Cliente",
+      "short_name": "Novo",
+      "description": "Cadastrar novo cliente",
+      "url": "/?action=novo-cliente",
+      "icons": [
+        {
+          "src": "/icon-shortcut-novo.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "short_name": "Lista",
+      "description": "Ver lista de clientes",
+      "url": "/?action=clientes",
+      "icons": [
+        {
+          "src": "/icon-shortcut-clientes.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Resumo",
+      "short_name": "Resumo",
+      "description": "Ver resumo financeiro",
+      "url": "/?action=resumo",
+      "icons": [
+        {
+          "src": "/icon-shortcut-resumo.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  
+  "related_applications": [],
+  "prefer_related_applications": false,
+  
+  "iarc_rating_id": "",
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+cobranca",
+      "url": "/?action=%s"
     }
   ]
 }
